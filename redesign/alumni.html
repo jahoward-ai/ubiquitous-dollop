@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alumni | Hamilton Consulting Group</title>
+<meta name="description" content="Where Hamilton people work in consulting: an interactive globe and the alumni directory by firm.">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="stylesheet" href="b.css?v=2">
+</head>
+<body data-page="alumni">
+<a class="skip" href="#main">Skip to content</a>
+<div data-top></div>
+<main id="main">
+
+<section class="band globe-band"><div class="wrap globe-grid">
+  <div class="globe" id="globe" role="img" aria-label="A rotating globe with lines from Hamilton College to each city in the list"><p class="globe-fallback">Loading the globe…</p></div>
+  <div>
+    <p class="kicker" style="color:var(--gold)">Alumni</p>
+    <h1 style="font-size:clamp(2.2rem,4.5vw,3.6rem)">From Clinton, New York to the world’s top firms.</h1>
+    <p class="lede" style="color:var(--on-navy-muted);margin-top:1.25rem">Every line starts at Hamilton. Drag to spin the globe; pick a city to fly there.</p>
+    <ul class="places" data-places style="margin-top:1.5rem"></ul>
+    <div class="legend"><span><i></i>City</span><span><i class="arc"></i>Path from Hamilton</span></div>
+    <p class="note" style="color:var(--on-navy-muted);margin-top:1rem">Showing the 2026–27 Executive Board’s locations for now. Alumni office cities from the directory will be added here.</p>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="head"><div><p class="exhibit"><b>Exhibit 1</b> Hamilton alumni and members by firm</p><h2>42 people across four firms.</h2></div><p class="lede">From the Hamilton alumni and member directory supplied to HCG in October 2026. It shows where Hamilton people have worked, not a complete list or a placement record.</p></div>
+  <ul class="bars" aria-label="Hamilton alumni and members by firm">
+    <li data-tip="L.E.K. Consulting: 12 of 42" tabindex="0"><span class="name">L.E.K. Consulting</span><span class="track-bar"><span class="fill" style="width:100%"></span></span><span class="val">12</span></li>
+    <li data-tip="Bain & Company: 11 of 42" tabindex="0"><span class="name">Bain &amp; Company</span><span class="track-bar"><span class="fill" style="width:91.67%"></span></span><span class="val">11</span></li>
+    <li data-tip="McKinsey & Company: 10 of 42" tabindex="0"><span class="name">McKinsey &amp; Company</span><span class="track-bar"><span class="fill" style="width:83.33%"></span></span><span class="val">10</span></li>
+    <li data-tip="Boston Consulting Group: 9 of 42" tabindex="0"><span class="name">Boston Consulting Group</span><span class="track-bar"><span class="fill" style="width:75%"></span></span><span class="val">9</span></li>
+  </ul>
+</div></section>
+
+<section class="band mist"><div class="wrap">
+  <div class="callout" style="background:var(--paper)">
+    <div><p class="kicker">Talk to them</p><h2>Alumni are the best source on what the job is really like.</h2><p style="margin-top:.75rem">Find Hamilton consultants through Alumni Connections and ask about their office, their practice area, and how they recruited.</p></div>
+    <div class="actions" style="margin-top:0"><a class="btn" href="https://hamiltoncollege.my.site.com/HamiltonPortal/login" target="_blank" rel="noopener">Hamilton Alumni Connections</a><a class="arrow-link" href="https://www.linkedin.com/company/hamilton-consulting-group" target="_blank" rel="noopener">HCG on LinkedIn</a></div>
+  </div>
+</div></section>
+
+</main>
+<div data-foot></div>
+<script src="alumni-map.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js"></script>
+<script src="b.js?v=2"></script>
+</body>
+</html>
