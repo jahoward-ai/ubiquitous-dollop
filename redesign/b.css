@@ -264,3 +264,8 @@ button, input, select, textarea { font: inherit; }
   .path { transition: none; }
   .path:hover { transform: none; }
 }
+
+/* Firm bars on a navy band */
+.bars.on-navy .track-bar { background: rgba(255, 255, 255, .08); }
+.bars.on-navy .fill { background: var(--gold); }
+.bars.on-navy li:hover .fill, .bars.on-navy li:focus-within .fill { background: var(--gold-soft); }

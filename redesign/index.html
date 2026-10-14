@@ -6,7 +6,7 @@
 <title>Hamilton Consulting Group</title>
 <meta name="description" content="Hamilton College's student consulting group: learn the profession, prepare for recruiting, and practice on real client work through Quill.">
 <link rel="icon" type="image/png" href="../assets/favicon.png">
-<link rel="stylesheet" href="b.css?v=3">
+<link rel="stylesheet" href="b.css?v=5">
 </head>
 <body data-page="home">
 <a class="skip" href="#main">Skip to content</a>
@@ -23,7 +23,7 @@
   <div class="collage">
     <img class="a" src="../assets/photos/home-hero.jpg" alt="A presenter walking a team through a slide">
     <img class="b" src="../assets/photos/quill.jpg" alt="Two people sketching ideas on a whiteboard">
-    <a class="stat" href="alumni.html"><strong>42</strong><span>Hamilton alumni and members at McKinsey, BCG, Bain, and L.E.K. See the globe</span></a>
+    <a class="stat" href="alumni.html"><strong data-alumni="total">113</strong><span>HCG alumni at <span data-alumni="employers">46</span> employers, from McKinsey to L.E.K. See the globe</span></a>
   </div>
 </div></section>
 
@@ -50,13 +50,8 @@
 </div></section>
 
 <section class="band navy"><div class="wrap head" style="margin-bottom:0">
-  <div><p class="exhibit"><b>Exhibit 1</b> Hamilton in consulting</p><h2>Hamilton people are already at the top firms.</h2><p class="lede" style="margin-top:1.25rem">42 Hamilton alumni and members appear in the directory across McKinsey, BCG, Bain, and L.E.K. See where Hamilton goes on the alumni globe.</p><div class="actions"><a class="btn gold" href="alumni.html">Open the alumni globe</a></div></div>
-  <ul class="bars" aria-label="Hamilton alumni and members by firm">
-    <li data-tip="L.E.K. Consulting: 12"><span class="name">L.E.K. Consulting</span><span class="track-bar" style="background:rgba(255,255,255,.08)"><span class="fill" style="width:100%;background:var(--gold)"></span></span><span class="val">12</span></li>
-    <li data-tip="Bain & Company: 11"><span class="name">Bain &amp; Company</span><span class="track-bar" style="background:rgba(255,255,255,.08)"><span class="fill" style="width:91.67%;background:var(--gold)"></span></span><span class="val">11</span></li>
-    <li data-tip="McKinsey & Company: 10"><span class="name">McKinsey &amp; Company</span><span class="track-bar" style="background:rgba(255,255,255,.08)"><span class="fill" style="width:83.33%;background:var(--gold)"></span></span><span class="val">10</span></li>
-    <li data-tip="Boston Consulting Group: 9"><span class="name">Boston Consulting Group</span><span class="track-bar" style="background:rgba(255,255,255,.08)"><span class="fill" style="width:75%;background:var(--gold)"></span></span><span class="val">9</span></li>
-  </ul>
+  <div><p class="exhibit"><b>Exhibit 1</b> Where HCG alumni work</p><h2>HCG alumni are already at the top firms.</h2><p class="lede" style="margin-top:1.25rem"><span data-alumni="total">113</span> HCG alumni work at <span data-alumni="employers">46</span> employers in cities from Boston to Hong Kong. See where on the alumni globe.</p><div class="actions"><a class="btn gold" href="alumni.html">Open the alumni globe</a></div></div>
+  <ul class="bars on-navy" data-firm-bars data-limit="4" aria-label="HCG alumni at the four largest employers"></ul>
 </div></section>
 
 <section class="band"><div class="wrap">
@@ -68,6 +63,8 @@
 
 </main>
 <div data-foot></div>
-<script src="b.js?v=4"></script>
+<script src="../assets/alumni-data.js?v=1"></script>
+<script src="../assets/alumni.js?v=1"></script>
+<script src="b.js?v=5"></script>
 </body>
 </html>
