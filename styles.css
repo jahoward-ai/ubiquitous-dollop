@@ -452,6 +452,15 @@ input, select, textarea { width: 100%; min-height: 48px; padding: .7rem .8rem; b
 textarea { min-height: 140px; resize: vertical; }
 input:focus, select:focus, textarea:focus { border-color: var(--blue); outline: 3px solid rgba(6,47,135,.15); outline-offset: 0; }
 
+/* Photo headers: any hero or blue section with class "has-photo" and an <img class="hero-photo">.
+   Swap a photo by replacing the file in assets/photos/ with one of the same name. */
+.has-photo { position: relative; isolation: isolate; }
+.has-photo > .hero-photo { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center; }
+.has-photo::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(100deg, rgba(2, 14, 50, .95) 0%, rgba(8, 36, 100, .88) 45%, rgba(6, 47, 135, .55) 100%); }
+.blue-section.has-photo::before { background: linear-gradient(100deg, rgba(2, 14, 50, .94) 0%, rgba(8, 36, 100, .9) 55%, rgba(6, 47, 135, .7) 100%); }
+.home-hero.has-photo .hero-mark { display: none; }
+.has-photo .hero-quill-mark img { opacity: .55; }
+
 @media (max-width: 1080px) {
   :root { --gutter: 2rem; }
   .nav-links { gap: .7rem; }
@@ -538,6 +547,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); outline: 
   .quill-section-nav .container { width: 100%; padding-left: var(--gutter); }
   .quill-section-nav a { padding: .8rem .85rem; }
   .anchor-target, .resource-card { scroll-margin-top: 140px; }
+  .has-photo::before, .blue-section.has-photo::before { background: rgba(2, 14, 50, .86); }
 }
 
 @media (prefers-reduced-motion: reduce) {
