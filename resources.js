@@ -9,22 +9,22 @@ window.HCG_RESOURCES = [
     eventDescription: 'An introductory session on what consultants do, how engagements work, why Hamilton students fit the profession, and how students can begin preparing.',
     access: 'Public. View the presentation in your browser or download the PDF.',
     public: true,
-    view: '/files/what-is-management-consulting.pdf',
-    download: '/files/what-is-management-consulting.pdf',
-    details: '/resources/#what-is-management-consulting'
+    view: 'files/what-is-management-consulting.pdf',
+    download: 'files/what-is-management-consulting.pdf',
+    details: 'resources/index.html#what-is-management-consulting'
   },
   {
     id: 'case-interview-crash-course',
     title: 'Case Interview Crash Course',
     date: 'March 8, 2026',
     topic: 'Case Preparation',
-    topicKey: 'case',
+    topicKey: 'case-prep',
     description: 'A workshop covering consulting problem solving, the interview flow, exhibit interpretation, quantitative work, and recommendation delivery through a practice case.',
     eventDescription: 'A practical case-interview workshop introducing structured problem solving and a guided practice case.',
     access: 'Public. View the presentation in your browser or download the PDF.',
     public: true,
-    view: '/files/case-interview-crash-course.pdf',
-    download: '/files/case-interview-crash-course.pdf',
-    details: '/resources/#case-interview-crash-course'
+    view: 'files/case-interview-crash-course.pdf',
+    download: 'files/case-interview-crash-course.pdf',
+    details: 'resources/index.html#case-interview-crash-course'
   }
 ];

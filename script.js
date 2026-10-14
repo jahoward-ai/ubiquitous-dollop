@@ -1,4 +1,7 @@
-const page = document.body.dataset.page || '';
+// Folder that holds this script = the site root. Lets every page use the same links,
+// whether the site is served from a domain root, a GitHub Pages subfolder, or a local file.
+const ROOT = document.currentScript ? new URL('.', document.currentScript.src).href : '/';
+const page = document.body.dataset.page || document.querySelector('[data-page]')?.dataset.page || '';
 
 const header = document.querySelector('[data-site-header]');
 if (header) {
@@ -8,35 +11,35 @@ if (header) {
   header.className = 'site-header';
   header.innerHTML = `
     <div class="container nav">
-      <a class="brand" href="/" aria-label="Hamilton Consulting Group home"><img src="/assets/hcg-wordmark-white.png" alt="Hamilton Consulting Group"></a>
+      <a class="brand" href="${ROOT}index.html" aria-label="Hamilton Consulting Group home"><img src="${ROOT}assets/hcg-wordmark-white.png" alt="Hamilton Consulting Group"></a>
       <button class="menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-navigation"><span></span><span></span><span></span></button>
       <nav class="nav-links" id="primary-navigation" aria-label="Primary navigation">
-        <a href="/about/"${current('about')}>About</a>
+        <a href="${ROOT}about/index.html"${current('about')}>About</a>
         <div class="nav-dropdown">
-          <a class="nav-dropdown-main" href="/learn/"${learnCurrent ? ' aria-current="page"' : ''}>Learn &amp; Prepare</a>
+          <a class="nav-dropdown-main" href="${ROOT}learn/index.html"${learnCurrent ? ' aria-current="page"' : ''}>Learn &amp; Prepare</a>
           <button class="submenu-toggle" type="button" aria-label="Open Learn and Prepare menu" aria-expanded="false" aria-controls="learn-submenu"><span aria-hidden="true">⌄</span></button>
           <div class="submenu" id="learn-submenu">
-            <a href="/learn/"${current('learn')}>Overview</a>
-            <a href="/industry/"${current('industry')}>Industry Knowledge</a>
-            <a href="/recruiting/#recruiting"${current('recruiting')}>Recruiting</a>
-            <a href="/recruiting/#case-preparation">Case Preparation</a>
-            <a href="/resources/"${current('resources')}>Resources</a>
+            <a href="${ROOT}learn/index.html"${current('learn')}>Overview</a>
+            <a href="${ROOT}industry/index.html"${current('industry')}>Industry Knowledge</a>
+            <a href="${ROOT}recruiting/index.html#recruiting"${current('recruiting')}>Recruiting</a>
+            <a href="${ROOT}recruiting/index.html#case-preparation">Case Preparation</a>
+            <a href="${ROOT}resources/index.html"${current('resources')}>Resources</a>
           </div>
         </div>
         <div class="nav-dropdown">
-          <a class="nav-dropdown-main" href="/quill/"${quillCurrent ? ' aria-current="page"' : ''}>Quill</a>
+          <a class="nav-dropdown-main" href="${ROOT}quill/index.html"${quillCurrent ? ' aria-current="page"' : ''}>Quill</a>
           <button class="submenu-toggle" type="button" aria-label="Open Quill menu" aria-expanded="false" aria-controls="quill-submenu"><span aria-hidden="true">⌄</span></button>
           <div class="submenu" id="quill-submenu">
-            <a href="/quill/"${current('quill')}>Overview</a>
-            <a href="/quill/get-involved/"${current('quill-get-involved')}>Get Involved</a>
-            <a href="/quill/work-with-us/"${current('quill-work-with-us')}>Work With Us</a>
-            <a href="/quill/skills/"${current('quill-skills')}>Skills &amp; Experience</a>
-            <a href="/quill/engagements/"${current('quill-engagements')}>Past Engagements</a>
+            <a href="${ROOT}quill/index.html"${current('quill')}>Overview</a>
+            <a href="${ROOT}quill/get-involved/index.html"${current('quill-get-involved')}>Get Involved</a>
+            <a href="${ROOT}quill/work-with-us/index.html"${current('quill-work-with-us')}>Work With Us</a>
+            <a href="${ROOT}quill/skills/index.html"${current('quill-skills')}>Skills &amp; Experience</a>
+            <a href="${ROOT}quill/engagements/index.html"${current('quill-engagements')}>Past Engagements</a>
           </div>
         </div>
-        <a href="/events/"${current('events')}>Events</a>
-        <a href="/outcomes/"${current('outcomes')}>Hamilton in Consulting</a>
-        <a class="nav-cta" href="/apply/"${current('apply')}>Join HCG</a>
+        <a href="${ROOT}events/index.html"${current('events')}>Events</a>
+        <a href="${ROOT}outcomes/index.html"${current('outcomes')}>Hamilton in Consulting</a>
+        <a class="nav-cta" href="${ROOT}apply/index.html"${current('apply')}>Join HCG</a>
       </nav>
     </div>`;
 }
@@ -44,7 +47,7 @@ if (header) {
 const footer = document.querySelector('[data-site-footer]');
 if (footer) {
   footer.className = 'site-footer';
-  footer.innerHTML = `<div class="container footer-grid"><img src="/assets/hcg-wordmark-white.png" alt="Hamilton Consulting Group"><div class="footer-links"><a href="/contact/">Contact</a><a href="mailto:hconsult@hamilton.edu">hconsult@hamilton.edu</a><a href="https://www.linkedin.com/company/hamilton-consulting-group" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p>© <span data-year></span> Hamilton Consulting Group.</p></div>`;
+  footer.innerHTML = `<div class="container footer-grid"><img src="${ROOT}assets/hcg-wordmark-white.png" alt="Hamilton Consulting Group"><div class="footer-links"><a href="${ROOT}contact/index.html">Contact</a><a href="mailto:hconsult@hamilton.edu">hconsult@hamilton.edu</a><a href="https://www.linkedin.com/company/hamilton-consulting-group" target="_blank" rel="noopener noreferrer">LinkedIn</a></div><p>© <span data-year></span> Hamilton Consulting Group.</p></div>`;
 }
 
 const menuButton = document.querySelector('.menu-button');
@@ -110,8 +113,8 @@ if (window.location.hash) {
 
 const resourceCard = (resource, compact = false) => {
   const actions = resource.public
-    ? `<div class="resource-actions"><a class="text-link" href="${resource.view}" target="_blank" rel="noopener noreferrer">View presentation</a><a class="text-link" href="${resource.download}" download>Download PDF</a></div>`
-    : `<div class="resource-actions"><a class="text-link" href="${resource.details}">View resource details</a><a class="text-link" href="/contact/?request=archive">Ask about access</a></div>`;
+    ? `<div class="resource-actions"><a class="text-link" href="${ROOT}${resource.view}" target="_blank" rel="noopener noreferrer">View presentation</a><a class="text-link" href="${ROOT}${resource.download}" download>Download PDF</a></div>`
+    : `<div class="resource-actions"><a class="text-link" href="${ROOT}${resource.details}">View resource details</a><a class="text-link" href="${ROOT}contact/index.html#archive">Ask about access</a></div>`;
   return `<article class="resource-card${compact ? ' compact' : ''}" id="${resource.id}"><div class="resource-meta"><span>${resource.topic}</span><time>${resource.date}</time></div><h3>${resource.title}</h3><p>${resource.description}</p><p class="access-note"><strong>Access:</strong> ${resource.access}</p>${actions}</article>`;
 };
 
@@ -125,8 +128,8 @@ if (window.HCG_RESOURCES) {
   document.querySelectorAll('[data-past-event-list]').forEach((list) => {
     list.innerHTML = window.HCG_RESOURCES.map((item) => {
       const actions = item.public
-        ? `<div class="resource-actions"><a class="text-link" href="${item.view}" target="_blank" rel="noopener noreferrer">View presentation</a><a class="text-link" href="${item.download}" download>Download PDF</a><a class="text-link" href="/resources/#${item.id}">Resource details</a></div>`
-        : `<a class="text-link" href="/resources/#${item.id}">Presentation and access details</a>`;
+        ? `<div class="resource-actions"><a class="text-link" href="${ROOT}${item.view}" target="_blank" rel="noopener noreferrer">View presentation</a><a class="text-link" href="${ROOT}${item.download}" download>Download PDF</a><a class="text-link" href="${ROOT}resources/index.html#${item.id}">Resource details</a></div>`
+        : `<a class="text-link" href="${ROOT}resources/index.html#${item.id}">Presentation and access details</a>`;
       return `<article class="past-event" id="event-${item.id}"><div><time>${item.date}</time><span>${item.topic}</span></div><div><h3>${item.title}</h3><p>${item.eventDescription}</p>${actions}</div></article>`;
     }).join('');
   });
@@ -146,8 +149,9 @@ const requestDefinitions = {
 };
 
 const requestPage = document.querySelector('[data-request-page]');
-if (requestPage) {
-  const key = new URLSearchParams(window.location.search).get('request') || 'general';
+// The contact page reads its topic from the link, e.g. contact/index.html#office-hours
+const renderRequest = () => {
+  const key = window.location.hash.slice(1) || new URLSearchParams(window.location.search).get('request') || 'general';
   const request = requestDefinitions[key] || requestDefinitions.general;
   requestPage.querySelector('[data-request-label]').textContent = request.label;
   requestPage.querySelector('[data-request-title]').textContent = request.title;
@@ -157,6 +161,10 @@ if (requestPage) {
   const emailAction = requestPage.querySelector('[data-email-action]');
   emailAction.href = `mailto:hconsult@hamilton.edu?subject=${encodeURIComponent(request.subject)}&body=${encodeURIComponent(body)}`;
   emailAction.textContent = 'Open email to HCG';
+};
+if (requestPage) {
+  renderRequest();
+  window.addEventListener('hashchange', () => { renderRequest(); window.scrollTo(0, 0); });
 }
 
 document.querySelectorAll('[data-copy-email]').forEach((button) => button.addEventListener('click', async () => {
