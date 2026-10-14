@@ -7,7 +7,7 @@ window.HCG_ALUMNI = {
   withEmployer: 109,     // alumni with an employer listed
   employers: 46,         // different employers
   classYears: '1982–2027',
-  // Employers with 3 or more HCG alumni. Everyone else is counted in `otherCount`.
+  // Employers with 2 or more HCG alumni (shown as bars).
   firms: [
     { name: 'L.E.K. Consulting', count: 13 },
     { name: 'McKinsey & Company', count: 11 },
@@ -17,9 +17,22 @@ window.HCG_ALUMNI = {
     { name: 'Deloitte', count: 6 },
     { name: 'Analysis Group', count: 5 },
     { name: 'NERA Economic Consulting', count: 3 },
+    { name: 'AON', count: 2 },
+    { name: 'Lord Abbett', count: 2 },
+    { name: 'PwC', count: 2 },
+    { name: 'The Brattle Group', count: 2 },
   ],
-  otherCount: 42,        // alumni at the other 38 employers
-  otherEmployers: 38,
+  // Employers with exactly 1 HCG alum (shown in the "Other" dropdown). Employer names only.
+  other: [
+    '8am', 'Accenture', 'Activate Consulting', 'Alexander Group', 'ALKU', 'Alpine Rewards', 'APCO',
+    "Berry's Brook Consulting LLC", 'Blue Matter', 'Charles River Associates', 'Clarkston',
+    'Compass Lexecon', 'Cornerstone Research', 'Econic Partners', 'Empower', 'EY-Parthenon',
+    'FTI Consulting', 'Google', 'Kinetic Systems', 'Oliver Wyman', 'Point B',
+    'Public Consulting Group', 'Putnam', 'SciVida', 'SDG Group USA', 'SecurEvent Solutions', 'Segal',
+    'Simon Vision Consulting', 'Stax', 'Stout', 'Third Bridge Group Limited', 'Veeva Systems',
+    'WAP Sustainability Consulting', 'Wood Mackenzie',
+  ],
+  noEmployer: 4,         // alumni with no employer listed
   located: 42,           // alumni with a city listed (shown on the globe)
   // City counts only. Natick is counted in the Boston area.
   places: [

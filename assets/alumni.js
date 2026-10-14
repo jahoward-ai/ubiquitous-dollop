@@ -1,18 +1,24 @@
 // Alumni numbers, firm chart, and globe, shared by both versions of the site.
 // Reads window.HCG_ALUMNI from alumni-data.js (load that first).
-//  - Any element with data-alumni="total" (or employers, located, otherCount, otherEmployers,
-//    classYears, source) gets that number or text.
+//  - Any element with data-alumni="total" (or employers, located,
+//    classYears, source, otherEmployers) gets that number or text.
+//  - <div data-other-employers> gets an "Other" dropdown of employers with one alum each.
 //  - <ul data-firm-bars data-limit="4"> gets a bar chart of the top employers.
 //  - <div id="globe" class="globe"> plus an optional <ul data-places> gets the 3D globe
 //    (also needs topojson-client and globe.gl loaded before this file).
 (() => {
   const data = window.HCG_ALUMNI;
   if (!data) return;
+  data.otherEmployers = data.other.length;
   document.querySelectorAll('[data-alumni]').forEach((el) => { el.textContent = data[el.dataset.alumni]; });
   document.querySelectorAll('[data-firm-bars]').forEach((ul) => {
     const firms = data.firms.slice(0, +(ul.dataset.limit || data.firms.length));
     const max = Math.max(...firms.map((f) => f.count));
     ul.innerHTML = firms.map((f) => `<li data-tip="${f.name}: ${f.count} HCG alumni" title="${f.name}: ${f.count} HCG alumni" tabindex="0"><span class="name">${f.name}</span><span class="track-bar"><span class="fill" style="width:${(f.count / max * 100).toFixed(2)}%"></span></span><span class="val">${f.count}</span></li>`).join('');
+  });
+
+  document.querySelectorAll('[data-other-employers]').forEach((box) => {
+    box.innerHTML = `<details class="other-employers"><summary>Other <span>${data.other.length} employers with one HCG alum each</span></summary><ul>${data.other.map((n) => `<li>${n}</li>`).join('')}</ul></details>`;
   });
 
   const globeEl = document.getElementById('globe');

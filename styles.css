@@ -471,6 +471,16 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); outline: 
 .firm-bars li:hover .fill, .firm-bars li:focus-visible .fill { background: var(--navy); }
 .firm-bars .val { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
 
+/* "Other" employers dropdown under the alumni chart */
+.other-employers { max-width: 820px; margin: 1.25rem 0 1rem; border-top: 1px solid #d5dce8; border-bottom: 1px solid #d5dce8; }
+.other-employers summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1rem; padding: 1rem 0; cursor: pointer; font-weight: 600; list-style: none; }
+.other-employers summary::-webkit-details-marker { display: none; }
+.other-employers summary::before { content: "+"; width: 1rem; color: #062f87; }
+.other-employers[open] summary::before { content: "–"; }
+.other-employers summary span { color: #4d5a73; font-size: .9rem; font-weight: 400; }
+.other-employers ul { columns: 3 14rem; column-gap: 2rem; margin: 0; padding: 0 0 1.25rem 1.35rem; list-style: none; }
+.other-employers li { padding: .2rem 0; break-inside: avoid; color: #4d5a73; font-size: .95rem; }
+
 @media (max-width: 1080px) {
   :root { --gutter: 2rem; }
   .nav-links { gap: .7rem; }
