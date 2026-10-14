@@ -7,13 +7,27 @@ These are temporary stock photos from Unsplash (free to use under the Unsplash L
 | File | Used on | Photographer | Source |
 |---|---|---|---|
 | home-hero.jpg | Homepage header | Campaign Creators | https://unsplash.com/photos/gMsnXqILjp4 |
-| why-hamilton.jpg | "Why Hamilton" sections (Home, About) | Cloris Ying | https://unsplash.com/photos/M9VhxlGuyRw |
-| about.jpg | About header | Christina @ wocintechchat.com | https://unsplash.com/photos/faEfWCdOKIg |
-| industry.jpg | Industry Knowledge header | Vitaly Gariev | https://unsplash.com/photos/LzBMjkvZfh8 |
-| recruiting.jpg | Recruiting & Case Prep header | Redd Francisco | https://unsplash.com/photos/PTRzqc_h1r4 |
-| events.jpg | Events header | Quilia | https://unsplash.com/photos/1-aA2Fadydc |
-| quill.jpg | Quill header | Kaleidico | https://unsplash.com/photos/26MJGnCM0Wc |
-| quill-work-with-us.jpg | Quill · Work With Us header | Walls.io | https://unsplash.com/photos/YeoKgwFl-Xo |
-| join.jpg | Join HCG header | Timur Shakerzianov | https://unsplash.com/photos/yCs7YTwEw2w |
+| why-hamilton.jpg | "Why Hamilton" on Home and About | Cloris Ying | https://unsplash.com/photos/M9VhxlGuyRw |
+| about.jpg | About | Christina @ wocintechchat.com | https://unsplash.com/photos/faEfWCdOKIg |
+| learn.jpg | Learn & Prepare | Zoshua Colah | https://unsplash.com/photos/klbApl9mxr0 |
+| industry.jpg | Industry Knowledge | Vitaly Gariev | https://unsplash.com/photos/LzBMjkvZfh8 |
+| recruiting.jpg | Recruiting & Case Prep | Redd Francisco | https://unsplash.com/photos/PTRzqc_h1r4 |
+| resources.jpg | Resources | Carlos Muza | https://unsplash.com/photos/hpjSkU2UYSU |
+| quill.jpg | Quill overview | Kaleidico | https://unsplash.com/photos/26MJGnCM0Wc |
+| quill-get-involved.jpg | Quill · Get Involved | Andreea Avramescu | https://unsplash.com/photos/wR56AUlEsE4 |
+| quill-work-with-us.jpg | Quill · Work With Us | Sable Flow | https://unsplash.com/photos/KHpjeuaWOec |
+| quill-skills.jpg | Quill · Skills | Gorilla ROI Data Connector | https://unsplash.com/photos/9fZuqBYlV1w |
+| quill-engagements.jpg | Quill · Past Engagements | Campaign Creators | https://unsplash.com/photos/-kQ4tBklJI |
+| events.jpg, events-2.jpg | Events | Quilia; Teemu Paananen | https://unsplash.com/photos/1-aA2Fadydc, https://unsplash.com/photos/bzdhc5b3Bxs |
+| outcomes.jpg | Alumni | Sean Pollock | https://unsplash.com/photos/PhYq704ffdA |
+| join.jpg, join-2.jpg | Join HCG | Timur Shakerzianov; Brooke Cagle | https://unsplash.com/photos/yCs7YTwEw2w, https://unsplash.com/photos/-uHVRvDr7pg |
+| contact.jpg | Contact | note thanun | https://unsplash.com/photos/wq9mtFkMraM |
 
-The "Why Hamilton" photo is a generic fall campus, not Hamilton. Swap it for a real Hamilton campus photo first.
+The "Why Hamilton" and Contact photos are generic campuses, not Hamilton. Swap those first.
+
+## Executive Board headshots
+
+Put square photos in `assets/board/`, named after the person:
+`hunter-howard.jpg`, `dan-king.jpg`, `devon-de-vries.jpg`, `jack-davis.jpg`, `elizabeth-rudge.jpg`,
+`hunter-flattery.jpg`, `brendan-waivada.jpg`, `oliver-plese.jpg`, `ryan-coyle.jpg`.
+Until a photo exists, the About page shows the person's initials.
