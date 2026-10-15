@@ -4,6 +4,8 @@ These are temporary stock photos from Unsplash (free to use under the Unsplash L
 
 **To swap a photo:** replace the file with a new JPG of the same name. Landscape photos around 1600px wide work best. No code changes needed.
 
+**Used on the current site:** home-hero.jpg and quill.jpg (Home), quill.jpg (Quill), about.jpg and why-hamilton.jpg (About), learn.jpg (Prepare), resources.jpg (Resources), join.jpg (Join). The other photos were used by Version A (kept on the `version-a` branch) and are spares.
+
 | File | Used on | Photographer | Source |
 |---|---|---|---|
 | home-hero.jpg | Homepage header | Campaign Creators | https://unsplash.com/photos/gMsnXqILjp4 |
@@ -23,7 +25,7 @@ These are temporary stock photos from Unsplash (free to use under the Unsplash L
 | join.jpg, join-2.jpg | Join HCG | Timur Shakerzianov; Brooke Cagle | https://unsplash.com/photos/yCs7YTwEw2w, https://unsplash.com/photos/-uHVRvDr7pg |
 | contact.jpg | Contact | note thanun | https://unsplash.com/photos/wq9mtFkMraM |
 
-The "Why Hamilton" and Contact photos are generic campuses, not Hamilton. Swap those first.
+The "Why Hamilton" photo is a generic campus, not Hamilton. Swap it first.
 
 ## Executive Board headshots
 

@@ -11,7 +11,7 @@ const cur = (p) => (p === here ? ' aria-current="page"' : '');
 
 document.querySelector('[data-top]').outerHTML = `
 <header class="top"><div class="wrap">
-  <a class="logo" href="index.html" aria-label="Hamilton Consulting Group home"><img src="../assets/hcg-wordmark-blue.png" alt="Hamilton Consulting Group"></a>
+  <a class="logo" href="index.html" aria-label="Hamilton Consulting Group home"><img src="assets/hcg-wordmark-blue.png" alt="Hamilton Consulting Group"></a>
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
   <nav class="menu" id="menu" aria-label="Main">
     <a href="about.html"${cur('about')}>About</a>
@@ -26,7 +26,7 @@ document.querySelector('[data-top]').outerHTML = `
 document.querySelector('[data-foot]').outerHTML = `
 <footer class="foot"><div class="wrap">
   <div class="cols">
-    <div><img src="../assets/hcg-wordmark-white.png" alt="Hamilton Consulting Group"><p style="margin-top:1rem">Hamilton College’s student consulting group.</p><p class="mail">${HCG_EMAIL}</p></div>
+    <div><img src="assets/hcg-wordmark-white.png" alt="Hamilton Consulting Group"><p style="margin-top:1rem">Hamilton College’s student consulting group.</p><p class="mail">${HCG_EMAIL}</p></div>
     <nav aria-label="The group"><h2>The group</h2><a href="about.html">About &amp; board</a><a href="alumni.html">Alumni globe</a><a href="join.html">Join HCG</a><a href="${PARTNERSHIP_FORM}" target="_blank" rel="noopener">Partnership application</a><a href="${LINKEDIN}" target="_blank" rel="noopener">LinkedIn</a></nav>
     <nav aria-label="Quill"><h2>Quill</h2><a href="quill.html#students">For students</a><a href="quill.html#organizations">For organizations</a><a href="quill.html#work">Past engagements</a></nav>
     <nav aria-label="Prepare"><h2>Prepare</h2><a href="prepare.html#profession">The profession</a><a href="prepare.html#timeline">Recruiting timeline</a><a href="prepare.html#case">Case interviews</a><a href="resources.html">Presentations &amp; resources</a><a href="resources.html#case-materials">Case book &amp; library</a></nav>
