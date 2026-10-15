@@ -2,6 +2,13 @@
 // Anonymous on purpose: only totals, firm counts, and city counts. Never add names,
 // titles, emails, or LinkedIn links here. To update, recount from the sheet and edit the numbers.
 window.HCG_ALUMNI = {
+  // Live updates: paste the two "Publish to web" CSV links from the public counts sheet
+  // (see README, "Live alumni numbers"). Leave empty to use the numbers below.
+  live: {
+    employersCsv: '',
+    citiesCsv: '',
+    sourceLabel: 'HCG alumni list, updated automatically',
+  },
   source: 'HCG alumni list, October 2026',
   total: 113,            // alumni on the list
   withEmployer: 109,     // alumni with an employer listed

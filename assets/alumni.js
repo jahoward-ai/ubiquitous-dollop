@@ -1,34 +1,143 @@
-// Alumni numbers, firm chart, and globe, shared by both versions of the site.
+// Alumni numbers, employer chart, and globe.
 // Reads window.HCG_ALUMNI from alumni-data.js (load that first).
-//  - Any element with data-alumni="total" (or employers, located,
-//    classYears, source, otherEmployers) gets that number or text.
+//  - Any element with data-alumni="total" (or employers, located, classYears, source,
+//    otherEmployers) gets that number or text.
+//  - <ul data-firm-bars data-limit="4"> gets a bar chart of employers with 2+ alumni.
 //  - <div data-other-employers> gets an "Other" dropdown of employers with one alum each.
-//  - <ul data-firm-bars data-limit="4"> gets a bar chart of the top employers.
 //  - <div id="globe" class="globe"> plus an optional <ul data-places> gets the 3D globe
 //    (also needs topojson-client and globe.gl loaded before this file).
+// If HCG_ALUMNI.live has published Google Sheet links, the numbers are refreshed from the
+// sheet every time the page loads; the numbers in alumni-data.js are shown until then.
 (() => {
   const data = window.HCG_ALUMNI;
   if (!data) return;
-  data.otherEmployers = data.other.length;
-  document.querySelectorAll('[data-alumni]').forEach((el) => { el.textContent = data[el.dataset.alumni]; });
-  document.querySelectorAll('[data-firm-bars]').forEach((ul) => {
-    const firms = data.firms.slice(0, +(ul.dataset.limit || data.firms.length));
-    const max = Math.max(...firms.map((f) => f.count));
-    ul.innerHTML = firms.map((f) => `<li data-tip="${f.name}: ${f.count} HCG alumni" title="${f.name}: ${f.count} HCG alumni" tabindex="0"><span class="name">${f.name}</span><span class="track-bar"><span class="fill" style="width:${(f.count / max * 100).toFixed(2)}%"></span></span><span class="val">${f.count}</span></li>`).join('');
-  });
-
-  document.querySelectorAll('[data-other-employers]').forEach((box) => {
-    box.innerHTML = `<details class="other-employers"><summary>Other <span>${data.other.length} employers with one HCG alum each</span></summary><ul>${data.other.map((n) => `<li>${n}</li>`).join('')}</ul></details>`;
-  });
-
-  const globeEl = document.getElementById('globe');
-  if (!globeEl) return;
   const here = document.currentScript ? new URL('.', document.currentScript.src).href : '';
-  const places = data.places || [];
-  const origin = { lat: 43.0526, lng: -75.4060 };
-  const label = (p) => `${p.city}: ${p.count} ${p.count === 1 ? 'alum' : 'alumni'}`;
+  let onPlaces = () => {};
+
+  // City name in the sheet -> where it goes on the globe. Add a line here for a new city.
+  const CITY_COORDS = {
+    'boston, ma': ['Boston area', 42.36, -71.06], 'natick, ma': ['Boston area', 42.36, -71.06], 'cambridge, ma': ['Boston area', 42.36, -71.06],
+    'new york, ny': ['New York', 40.71, -74.01], 'brooklyn, ny': ['New York', 40.71, -74.01],
+    'chicago, il': ['Chicago', 41.88, -87.63], 'dallas, tx': ['Dallas', 32.78, -96.80], 'houston, tx': ['Houston', 29.76, -95.37],
+    'austin, tx': ['Austin', 30.27, -97.74], 'los angeles, ca': ['Los Angeles', 34.05, -118.24], 'san francisco, ca': ['San Francisco', 37.77, -122.42],
+    'palo alto, ca': ['San Francisco Bay Area', 37.44, -122.14], 'san diego, ca': ['San Diego', 32.72, -117.16], 'seattle, wa': ['Seattle', 47.61, -122.33],
+    'portland, or': ['Portland', 45.52, -122.68], 'denver, co': ['Denver', 39.74, -104.99], 'minneapolis, mn': ['Minneapolis', 44.98, -93.27],
+    'washington, dc': ['Washington, DC', 38.91, -77.04], 'arlington, va': ['Washington, DC', 38.91, -77.04], 'philadelphia, pa': ['Philadelphia', 39.95, -75.17],
+    'pittsburgh, pa': ['Pittsburgh', 40.44, -79.99], 'atlanta, ga': ['Atlanta', 33.75, -84.39], 'miami, fl': ['Miami', 25.76, -80.19],
+    'charlotte, nc': ['Charlotte', 35.23, -80.84], 'raleigh, nc': ['Raleigh', 35.78, -78.64], 'nashville, tn': ['Nashville', 36.16, -86.78],
+    'detroit, mi': ['Detroit', 42.33, -83.05], 'cleveland, oh': ['Cleveland', 41.50, -81.69], 'columbus, oh': ['Columbus', 39.96, -83.00],
+    'st. louis, mo': ['St. Louis', 38.63, -90.20], 'kansas city, mo': ['Kansas City', 39.10, -94.58], 'phoenix, az': ['Phoenix', 33.45, -112.07],
+    'salt lake city, ut': ['Salt Lake City', 40.76, -111.89], 'stamford, ct': ['Stamford', 41.05, -73.54], 'hartford, ct': ['Hartford', 41.76, -72.67],
+    'new haven, ct': ['New Haven', 41.31, -72.92], 'providence, ri': ['Providence', 41.82, -71.41], 'albany, ny': ['Albany', 42.65, -73.75],
+    'syracuse, ny': ['Syracuse', 43.05, -76.15], 'rochester, ny': ['Rochester', 43.16, -77.61], 'buffalo, ny': ['Buffalo', 42.89, -78.88],
+    'clinton, ny': ['Clinton, NY', 43.05, -75.38], 'toronto': ['Toronto', 43.65, -79.38], 'montreal': ['Montréal', 45.50, -73.57], 'montréal': ['Montréal', 45.50, -73.57],
+    'london': ['London', 51.51, -0.13], 'paris': ['Paris', 48.86, 2.35], 'madrid': ['Madrid', 40.42, -3.70], 'milan': ['Milan', 45.46, 9.19],
+    'italy': ['Italy', 41.90, 12.50], 'zurich': ['Zurich', 47.38, 8.54], 'munich': ['Munich', 48.14, 11.58], 'berlin': ['Berlin', 52.52, 13.40],
+    'amsterdam': ['Amsterdam', 52.37, 4.90], 'dublin': ['Dublin', 53.35, -6.26], 'hong kong': ['Hong Kong', 22.32, 114.17], 'singapore': ['Singapore', 1.35, 103.82],
+    'tokyo': ['Tokyo', 35.68, 139.69], 'shanghai': ['Shanghai', 31.23, 121.47], 'beijing': ['Beijing', 39.90, 116.41], 'seoul': ['Seoul', 37.57, 126.98],
+    'mumbai': ['Mumbai', 19.08, 72.88], 'dubai': ['Dubai', 25.20, 55.27], 'sydney': ['Sydney', -33.87, 151.21], 'são paulo': ['São Paulo', -23.55, -46.63],
+    'mexico city': ['Mexico City', 19.43, -99.13],
+  };
+
+  const render = () => {
+    data.otherEmployers = data.other.length;
+    document.querySelectorAll('[data-alumni]').forEach((el) => { if (data[el.dataset.alumni] !== undefined) el.textContent = data[el.dataset.alumni]; });
+    document.querySelectorAll('[data-firm-bars]').forEach((ul) => {
+      const firms = data.firms.slice(0, +(ul.dataset.limit || data.firms.length));
+      const max = Math.max(...firms.map((f) => f.count));
+      ul.innerHTML = firms.map((f) => `<li data-tip="${f.name}: ${f.count} HCG alumni" title="${f.name}: ${f.count} HCG alumni" tabindex="0"><span class="name">${f.name}</span><span class="track-bar"><span class="fill" style="width:${(f.count / max * 100).toFixed(2)}%"></span></span><span class="val">${f.count}</span></li>`).join('');
+    });
+    document.querySelectorAll('[data-other-employers]').forEach((box) => {
+      const wasOpen = box.querySelector('details')?.open;
+      box.innerHTML = `<details class="other-employers"${wasOpen ? ' open' : ''}><summary>Other <span>${data.other.length} employers with one HCG alum each</span></summary><ul>${data.other.map((n) => `<li>${n}</li>`).join('')}</ul></details>`;
+    });
+    onPlaces();
+  };
+
+  // ---- Live numbers from a published Google Sheet ---------------------------------
+  const parseCsv = (text) => text.trim().split(/\r?\n/).map((line) => {
+    const cells = []; let cur = ''; let quoted = false;
+    for (let i = 0; i < line.length; i += 1) {
+      const ch = line[i];
+      if (quoted) { if (ch === '"' && line[i + 1] === '"') { cur += '"'; i += 1; } else if (ch === '"') quoted = false; else cur += ch; }
+      else if (ch === '"') quoted = true; else if (ch === ',') { cells.push(cur.trim()); cur = ''; } else cur += ch;
+    }
+    cells.push(cur.trim());
+    // Rows are "name, number". If a name contains an unquoted comma ("Boston, MA"), rejoin it.
+    const blank = cells.slice(2).every((c) => c === '');
+    if (cells.length > 2 && !blank && /^\d+$/.test(cells[cells.length - 1])) return [cells.slice(0, -1).join(', '), cells[cells.length - 1]];
+    return cells.slice(0, 2);
+  });
+  const applyEmployers = (rows) => {
+    const counts = [];
+    rows.forEach(([name, value]) => {
+      const n = Number(value);
+      if (!name) return;
+      if (/^total alumni$/i.test(name) && n) data.total = n;
+      else if (/^class years$/i.test(name) && value) data.classYears = value;
+      else if (n > 0) counts.push({ name, count: n });
+    });
+    if (!counts.length) return;
+    counts.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+    data.firms = counts.filter((f) => f.count >= 2);
+    data.other = counts.filter((f) => f.count === 1).map((f) => f.name).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    data.employers = counts.length;
+    data.withEmployer = counts.reduce((s, f) => s + f.count, 0);
+  };
+  const applyCities = (rows) => {
+    const merged = new Map();
+    rows.forEach(([name, value]) => {
+      const n = Number(value);
+      if (!name || !(n > 0)) return;
+      const hit = CITY_COORDS[name.toLowerCase()];
+      if (!hit) console.warn(`Alumni globe: no coordinates for "${name}". Add it to CITY_COORDS in assets/alumni.js.`);
+      const [city, lat, lng] = hit || [name, null, null];
+      const prev = merged.get(city) || { city, lat, lng, count: 0 };
+      prev.count += n;
+      merged.set(city, prev);
+    });
+    if (!merged.size) return;
+    data.places = [...merged.values()].sort((a, b) => b.count - a.count || a.city.localeCompare(b.city));
+    data.located = data.places.reduce((s, p) => s + p.count, 0);
+  };
+  const live = data.live || {};
+  if (live.employersCsv || live.citiesCsv) {
+    const get = (url) => (url ? fetch(url).then((r) => (r.ok ? r.text() : Promise.reject())).then(parseCsv) : Promise.reject());
+    Promise.allSettled([get(live.employersCsv), get(live.citiesCsv)]).then(([emp, cit]) => {
+      if (emp.status === 'fulfilled') applyEmployers(emp.value);
+      if (cit.status === 'fulfilled') applyCities(cit.value);
+      if (emp.status === 'fulfilled' || cit.status === 'fulfilled') { data.source = live.sourceLabel || data.source; render(); }
+    });
+  }
+
+  // ---- Globe ------------------------------------------------------------------------
+  const globeEl = document.getElementById('globe');
   const list = document.querySelector('[data-places]');
-  if (list) list.innerHTML = places.map((p, i) => `<li><button type="button" data-i="${i}">${p.city}</button><span>${p.count}</span></li>`).join('');
+  const origin = { lat: 43.0526, lng: -75.4060 };
+  const onMap = () => (data.places || []).filter((p) => p.lat !== null && p.lat !== undefined);
+  const label = (p) => `${p.city}: ${p.count} ${p.count === 1 ? 'alum' : 'alumni'}`;
+  let globe = null;
+  let controls = null;
+  const drawList = () => {
+    if (list) list.innerHTML = (data.places || []).map((p, i) => `<li>${p.lat !== null && p.lat !== undefined ? `<button type="button" data-i="${i}">${p.city}</button>` : `<span>${p.city}</span>`}<span>${p.count}</span></li>`).join('');
+  };
+  const drawGlobe = () => {
+    if (!globe) return;
+    const places = onMap();
+    globe.pointsData([...places, { ...origin, origin: true }])
+      .arcsData(places.map((p) => ({ startLat: origin.lat, startLng: origin.lng, endLat: p.lat, endLng: p.lng })));
+  };
+  onPlaces = () => { drawList(); drawGlobe(); };
+
+  render();
+  if (!globeEl) return;
+
+  list?.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || !globe) return;
+    const p = data.places[+b.dataset.i];
+    controls.autoRotate = false;
+    globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: 1.3 }, 1200);
+  });
 
   const start = async () => {
     if (!window.Globe || !window.topojson) throw new Error('globe library unavailable');
@@ -41,35 +150,28 @@
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const size = () => { const w = globeEl.clientWidth; return [w, Math.min(w, 640)]; };
     const [w, h] = size();
-    const globe = window.Globe({ animateIn: !reduce })(globeEl)
+    globe = window.Globe({ animateIn: !reduce })(globeEl)
       .width(w).height(h)
       .backgroundColor('rgba(0,0,0,0)')
       .showAtmosphere(true).atmosphereColor('#7f9fe0').atmosphereAltitude(0.16)
       .hexPolygonsData(countries).hexPolygonResolution(3).hexPolygonMargin(0.35)
       .hexPolygonColor(() => 'rgba(214, 223, 239, 0.55)')
-      .pointsData([...places, { ...origin, origin: true }])
       .pointLat('lat').pointLng('lng')
       .pointColor((d) => (d.origin ? '#ffffff' : '#c9ad6a'))
       .pointAltitude((d) => (d.origin ? 0.01 : 0.02 + Math.sqrt(d.count) * 0.04))
       .pointRadius((d) => (d.origin ? 0.5 : 0.35 + Math.sqrt(d.count) * 0.12))
       .pointLabel((d) => (d.origin ? 'Hamilton College, Clinton, NY' : label(d)))
-      .arcsData(places.map((p) => ({ startLat: origin.lat, startLng: origin.lng, endLat: p.lat, endLng: p.lng })))
       .arcColor(() => ['rgba(255,255,255,0.15)', '#c9ad6a'])
       .arcStroke(0.5)
       .arcDashLength(reduce ? 1 : 0.5).arcDashGap(reduce ? 0 : 0.25).arcDashAnimateTime(reduce ? 0 : 2600)
       .pointOfView({ lat: 38, lng: -60, altitude: 2.2 });
     globe.globeMaterial().color.set('#0b2a6f');
-    const controls = globe.controls();
+    controls = globe.controls();
     controls.enableZoom = false;
     controls.autoRotate = !reduce;
     controls.autoRotateSpeed = 0.35;
+    drawGlobe();
     addEventListener('resize', () => { const [nw, nh] = size(); globe.width(nw).height(nh); });
-    list?.addEventListener('click', (e) => {
-      const b = e.target.closest('button'); if (!b) return;
-      const p = places[+b.dataset.i];
-      controls.autoRotate = false;
-      globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: 1.3 }, 1200);
-    });
     globeEl.querySelector('.globe-fallback')?.remove();
   };
   start().catch(() => {
