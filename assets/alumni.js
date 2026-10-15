@@ -74,19 +74,10 @@
       if (uncategorized.firms.length) groups.push(uncategorized);
       groups.forEach((g) => { g.total = g.firms.reduce((sum, f) => sum + f.count, 0); g.firms.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)); });
       const max = Math.max(...groups.map((g) => g.total));
-      // Employers with 2+ alumni are listed; the ones with a single alum go in an "Other" dropdown.
-      const item = (f) => `<li><span>${esc(f.name)}</span><span>${f.count}</span></li>`;
-      const listFor = (g) => {
-        const many = g.firms.filter((f) => f.count >= 2);
-        const ones = g.firms.filter((f) => f.count < 2);
-        const main = many.length ? `<ul>${many.map(item).join('')}</ul>` : '';
-        const other = ones.length ? `<details class="type-other"><summary>Other <span>${ones.length} ${ones.length === 1 ? 'employer' : 'employers'} with one alum${ones.length === 1 ? '' : ' each'}</span></summary><ul>${ones.map(item).join('')}</ul></details>` : '';
-        return main + other;
-      };
       const open = new Set([...box.querySelectorAll('details[open]')].map((d) => d.dataset.id));
       box.innerHTML = groups.filter((g) => g.total).map((g) => `<details class="type-row" data-id="${g.id}"${open.has(g.id) ? ' open' : ''}>
         <summary><span class="type-name"><strong>${esc(g.name)}</strong><small>${esc(g.blurb)}</small></span><span class="type-bar" aria-hidden="true"><span style="width:${(g.total / max * 100).toFixed(2)}%"></span></span><span class="type-count">${g.total}<small>${Math.round(g.total / data.withEmployer * 100)}%</small></span></summary>
-        ${listFor(g)}
+        <ul>${g.firms.map((f) => `<li><span>${esc(f.name)}</span><span>${f.count}</span></li>`).join('')}</ul>
       </details>`).join('');
     });
     onPlaces();

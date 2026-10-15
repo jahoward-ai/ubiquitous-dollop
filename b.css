@@ -303,11 +303,3 @@ button, input, select, textarea { font: inherit; }
   .type-bar { grid-column: 1 / -1; grid-row: 2; }
   .type-row ul { margin-left: 0; }
 }
-.type-other { margin: 0 0 1.25rem 1.6rem; }
-.type-other summary { display: flex; flex-wrap: wrap; gap: .25rem .75rem; align-items: baseline; padding: .5rem 0; cursor: pointer; font-weight: 600; font-size: .95rem; list-style: none; }
-.type-other summary::-webkit-details-marker { display: none; }
-.type-other summary::before { content: "+"; width: .9rem; color: var(--blue); }
-.type-other[open] summary::before { content: "–"; }
-.type-other summary span { color: var(--muted); font-weight: 400; font-size: .86rem; }
-.type-other ul { margin: .25rem 0 0 1.15rem; }
-@media (max-width: 640px) { .type-other { margin-left: 0; } }
