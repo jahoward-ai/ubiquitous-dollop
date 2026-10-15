@@ -143,18 +143,19 @@
   const label = (p) => `${p.city}: ${p.count} ${p.count === 1 ? 'alum' : 'alumni'}`;
   let globe = null;
   let controls = null;
-  // Cities with 2+ alumni are listed; cities with a single alum go in an "Other" dropdown.
+  // Cities with 3+ alumni are listed; cities with 1 or 2 go in an "Other" dropdown.
+  const OTHER_BELOW = 3;
   const drawList = () => {
     if (!list) return;
     const row = (p) => {
       const i = data.places.indexOf(p);
       return `<li>${p.lat !== null && p.lat !== undefined ? `<button type="button" data-i="${i}">${p.city}</button>` : `<span>${p.city}</span>`}<span>${p.count}</span></li>`;
     };
-    const many = (data.places || []).filter((p) => p.count >= 2);
-    const ones = (data.places || []).filter((p) => p.count < 2);
+    const many = (data.places || []).filter((p) => p.count >= OTHER_BELOW);
+    const ones = (data.places || []).filter((p) => p.count < OTHER_BELOW);
     const wasOpen = list.querySelector('.places-other details')?.open;
     list.innerHTML = many.map(row).join('') + (ones.length
-      ? `<li class="places-other"><details${wasOpen ? ' open' : ''}><summary>Other <span>${ones.length} ${ones.length === 1 ? 'city' : 'cities'} with one alum${ones.length === 1 ? '' : ' each'}</span></summary><ul>${ones.map(row).join('')}</ul></details></li>`
+      ? `<li class="places-other"><details${wasOpen ? ' open' : ''}><summary>Other <span>${ones.length} ${ones.length === 1 ? 'city' : 'cities'} with 1–2 alumni</span></summary><ul>${ones.map(row).join('')}</ul></details></li>`
       : '');
   };
   const drawGlobe = () => {
