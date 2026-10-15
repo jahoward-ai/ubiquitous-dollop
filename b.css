@@ -279,3 +279,27 @@ button, input, select, textarea { font: inherit; }
 .other-employers summary span { color: #4d5a73; font-size: .9rem; font-weight: 400; }
 .other-employers ul { columns: 3 14rem; column-gap: 2rem; margin: 0; padding: 0 0 1.25rem 1.35rem; list-style: none; }
 .other-employers li { padding: .2rem 0; break-inside: avoid; color: #4d5a73; font-size: .95rem; }
+
+/* Alumni by type of consulting: one expandable row per type */
+.types { border-top: 2px solid var(--ink); }
+.type-row { border-bottom: 1px solid var(--line); }
+.type-row summary { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 4.5rem; gap: 1.25rem; align-items: center; padding: 1.1rem 0; cursor: pointer; list-style: none; }
+.type-row summary::-webkit-details-marker { display: none; }
+.type-row summary:hover .type-name strong { color: var(--blue); }
+.type-name strong { display: flex; gap: .6rem; align-items: baseline; font: 400 1.25rem/1.3 var(--serif); }
+.type-name strong::before { content: "+"; flex: 0 0 1rem; color: var(--blue); font-family: var(--sans); font-weight: 600; }
+.type-row[open] .type-name strong::before { content: "–"; }
+.type-name small { display: block; margin: .2rem 0 0 1.6rem; color: var(--muted); font-size: .86rem; line-height: 1.45; }
+.type-bar { display: block; height: 22px; background: var(--mist); }
+.type-bar span { display: block; height: 100%; background: var(--blue); border-radius: 0 4px 4px 0; }
+.type-row:hover .type-bar span, .type-row[open] .type-bar span { background: var(--navy); }
+.type-count { font: 600 1.35rem/1 var(--sans); font-variant-numeric: tabular-nums; text-align: right; }
+.type-count small { display: block; margin-top: .25rem; color: var(--muted); font-size: .78rem; font-weight: 500; }
+.type-row ul { columns: 2 16rem; column-gap: 2.5rem; margin: 0 0 1.25rem 1.6rem; padding: 0; list-style: none; }
+.type-row li { display: flex; justify-content: space-between; gap: 1rem; padding: .4rem 0; border-bottom: 1px dotted var(--line); break-inside: avoid; font-size: .95rem; }
+.type-row li span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) {
+  .type-row summary { grid-template-columns: minmax(0, 1fr) 3.5rem; }
+  .type-bar { grid-column: 1 / -1; grid-row: 2; }
+  .type-row ul { margin-left: 0; }
+}

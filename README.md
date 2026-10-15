@@ -54,6 +54,8 @@ The alumni page can read its numbers straight from Google Sheets each time someo
 5. **Publish only these two tabs:** File → Share → Publish to web → pick `Employers` → Comma-separated values (.csv) → Publish → copy the link. Repeat for `Cities`.
 6. Paste the two links into `employersCsv` and `citiesCsv` in `assets/alumni-data.js`, then commit and push.
 
+**Types of consulting.** The Alumni page groups employers by type using `categoryOf` in `assets/alumni-data.js`. When a new employer appears in the sheet, it shows under "Not yet categorized" until you add one line for it there (for example `'Kearney': 'strategy',`).
+
 After that, editing the private sheet updates the website automatically (Google refreshes published sheets within about five minutes). A new city needs its map position added once to `CITY_COORDS` in `assets/alumni.js`; until then it appears in the city list without a globe marker.
 
 ## Request form → HCG inbox (Formspree)
