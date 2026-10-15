@@ -303,3 +303,13 @@ button, input, select, textarea { font: inherit; }
   .type-bar { grid-column: 1 / -1; grid-row: 2; }
   .type-row ul { margin-left: 0; }
 }
+
+/* "Other" cities dropdown in the globe's city list */
+.places .places-other { display: block; padding: 0; }
+.places-other summary { display: flex; flex-wrap: wrap; gap: .25rem .75rem; align-items: baseline; padding: .8rem 0; cursor: pointer; color: #fff; font-weight: 500; list-style: none; }
+.places-other summary::-webkit-details-marker { display: none; }
+.places-other summary::before { content: "+"; width: .9rem; color: var(--gold); font-weight: 600; }
+.places-other details[open] summary::before { content: "–"; }
+.places-other summary span { color: var(--on-navy-muted); font-size: .86rem; font-weight: 400; }
+.places-other ul { margin: 0 0 .5rem 1.15rem; padding: 0; list-style: none; }
+.places-other li { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-top: 1px solid var(--line-navy); }
