@@ -140,28 +140,3 @@ if (form) {
     result.focus();
   });
 }
-
-// ---- Quill page: fan of blue lines (inspired by McKinsey's binder cover) ------------
-// Each line runs from a point along the top edge to a point along the bottom edge in
-// reverse order, so the lines cross into a pinched, twisting ribbon.
-document.querySelectorAll('[data-line-fan]').forEach((svg) => {
-  const draw = () => {
-    const w = svg.clientWidth; const h = svg.clientHeight;
-    if (!w || !h) return;
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    const n = 46;
-    const mix = (a, b, t) => Math.round(a + (b - a) * t);
-    let out = '';
-    for (let i = 0; i < n; i += 1) {
-      const t = i / (n - 1);
-      const x1 = w * (0.42 + 0.56 * t);            // top: wide band on the right
-      const x2 = w * (0.52 - 0.42 * t);            // bottom: narrower band, reversed
-      const y2 = h * (1.02 - 0.12 * Math.sin(Math.PI * t));
-      const c = `rgb(${mix(110, 10, t)},${mix(150, 52, t)},${mix(240, 170, t)})`;
-      out += `<line x1="${x1.toFixed(1)}" y1="-4" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${c}"/>`;
-    }
-    svg.innerHTML = out;
-  };
-  draw();
-  addEventListener('resize', draw);
-});
