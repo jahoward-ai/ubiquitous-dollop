@@ -367,3 +367,12 @@ button, input, select, textarea { font: inherit; }
   .quill-art { position: relative; top: auto; right: auto; display: block; width: min(80%, 340px); margin: 1.5rem auto 0; transform: rotate(-8deg); animation: none; }
   .quill-head { padding-bottom: 1.5rem; }
 }
+
+/* Intro: tagline under the wordmark, and layers that drift at different speeds on scroll */
+.intro-drift { position: absolute; inset: 0; will-change: transform; pointer-events: none; }
+.intro-center { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: clamp(1rem, 2.5vh, 1.6rem); will-change: transform, opacity; }
+.intro-tag { margin: 0; padding: 0 1rem; color: var(--gold-soft); font: italic 400 clamp(1.15rem, 2.2vw, 1.6rem)/1.35 var(--label); text-align: center; text-shadow: 0 2px 18px rgba(3, 15, 51, .8); animation: tag-in .9s ease 1.55s both; }
+@keyframes tag-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .intro-tag { animation: none; } }
+.intro-center::before { content: ""; position: absolute; z-index: -1; inset: -18% -14%; background: radial-gradient(closest-side, rgba(4, 18, 60, .82) 0%, rgba(4, 18, 60, .55) 55%, rgba(4, 18, 60, 0) 100%); pointer-events: none; }
+.intro-tag { font-size: clamp(1.25rem, 2.4vw, 1.75rem); color: #f3e6c4; }

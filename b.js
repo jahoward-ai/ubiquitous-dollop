@@ -140,3 +140,22 @@ if (form) {
     result.focus();
   });
 }
+
+// ---- Homepage intro: layers drift at different speeds as you scroll -----------------
+// The quill moves slowest of all, the wordmark a little, so the cover feels layered.
+const driftLayers = [...document.querySelectorAll('[data-drift]')];
+if (driftLayers.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  let ticking = false;
+  const update = () => {
+    const y = Math.min(window.scrollY, window.innerHeight * 1.2);
+    driftLayers.forEach((el) => {
+      const speed = Number(el.dataset.drift) || 0;
+      const fade = el.hasAttribute('data-fade') ? Math.max(0, 1 - y / (window.innerHeight * 0.7)) : 1;
+      el.style.transform = `translate3d(0, ${(y * speed).toFixed(1)}px, 0)`;
+      el.style.opacity = fade.toFixed(3);
+    });
+    ticking = false;
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  update();
+}
