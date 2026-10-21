@@ -10,8 +10,8 @@ const here = document.body.dataset.page;
 const cur = (p) => (p === here ? ' aria-current="page"' : '');
 
 document.querySelector('[data-top]').outerHTML = `
-<header class="top${here === 'home' ? ' dark' : ''}"><div class="wrap">
-  <a class="logo" href="index.html" aria-label="Hamilton Consulting Group home"><img src="assets/hcg-wordmark-${here === 'home' ? 'white' : 'blue'}.png" alt="Hamilton Consulting Group"></a>
+<header class="top dark"><div class="wrap">
+  <a class="logo" href="index.html" aria-label="Hamilton Consulting Group home"><img src="assets/hcg-wordmark-white.png" alt="Hamilton Consulting Group"></a>
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
   <nav class="menu" id="menu" aria-label="Main">
     <a href="about.html"${cur('about')}>About</a>

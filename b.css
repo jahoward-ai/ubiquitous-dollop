@@ -468,3 +468,24 @@ button, input, select, textarea { font: inherit; }
 @media (max-width: 860px) { .fit-grid { grid-template-columns: 1fr; } }
 .band.ruled { background: var(--paper); border-top: 1px solid var(--line); }
 .band.ruled + .band { border-top: 1px solid var(--line); }
+
+/* Alumni globe city list: each city opens to show its firms */
+.places .place { display: block; padding: 0; border-top: 1px solid var(--line-navy); }
+.places .place > button { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 1rem; padding: .75rem 0; border: 0; background: none; color: #fff; font: 500 1rem/1.3 var(--sans); text-align: left; cursor: pointer; }
+.places .place > button:hover .place-name, .places .place.open > button .place-name { color: var(--gold); }
+.places .place-name::before { content: "+"; display: inline-block; width: 1rem; color: var(--gold); }
+.places .place.open .place-name::before { content: "–"; }
+.places .place-count { color: var(--on-navy-muted); font-variant-numeric: tabular-nums; }
+.places .mbb { margin-left: .4rem; padding: .05rem .4rem; border: 1px solid var(--gold); border-radius: 2px; color: var(--gold); font: normal 600 .66rem/1.3 var(--sans); letter-spacing: .04em; vertical-align: middle; }
+.places .place-firms { display: none; margin: 0 0 .75rem 1rem; padding: .25rem 0 .25rem .9rem; border-left: 2px solid var(--gold); list-style: none; }
+.places .place.open .place-firms { display: block; }
+.places .place-firms li { display: flex; justify-content: space-between; gap: 1rem; padding: .25rem 0; border: 0; color: var(--on-navy-muted); font-size: .9rem; }
+.places .place-firms li span:last-child { color: #fff; font-variant-numeric: tabular-nums; }
+.places-other li.place { border-top: 1px solid var(--line-navy); }
+
+/* Alumni bottom section on blue */
+.callout.callout-navy { background: rgba(255, 255, 255, .05); border: 1px solid var(--line-navy); }
+.callout.callout-navy h2, .callout.callout-navy p { color: #fff; }
+.callout.callout-navy .btn { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+.callout.callout-navy .arrow-link { color: #fff; }
+.places .place.open .place-firms { max-height: 15rem; overflow-y: auto; scrollbar-width: thin; }

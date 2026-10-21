@@ -161,36 +161,57 @@
   let globe = null;
   let controls = null;
   // Cities with 3+ alumni are listed; cities with 1 or 2 go in an "Other" dropdown.
+  // Each city opens to show which firms its alumni work at. Cities with MBB alumni
+  // (McKinsey, BCG, Bain) are highlighted on the globe and tagged in the list.
   const OTHER_BELOW = 3;
+  const MBB = ['McKinsey & Company', 'Boston Consulting Group', 'Bain & Company'];
+  const hasMBB = (p) => (p.firms || []).some((f) => MBB.includes(f.name));
+  let selected = null;
   const drawList = () => {
     if (!list) return;
     const row = (p) => {
       const i = data.places.indexOf(p);
-      return `<li>${p.lat !== null && p.lat !== undefined ? `<button type="button" data-i="${i}">${p.city}</button>` : `<span>${p.city}</span>`}<span>${p.count}</span></li>`;
+      const mapped = p.lat !== null && p.lat !== undefined;
+      const firms = (p.firms || []).map((f) => `<li><span>${esc(f.name)}</span><span>${f.count}</span></li>`).join('');
+      return `<li class="place${selected === p.city ? ' open' : ''}" data-city="${esc(p.city)}">
+        <button type="button" data-i="${i}" aria-expanded="${selected === p.city}"><span class="place-name">${esc(p.city)}${hasMBB(p) ? ' <em class="mbb">MBB</em>' : ''}</span><span class="place-count">${p.count}</span></button>
+        ${firms ? `<ul class="place-firms">${firms}</ul>` : ''}
+      </li>`;
     };
     const many = (data.places || []).filter((p) => p.count >= OTHER_BELOW);
     const ones = (data.places || []).filter((p) => p.count < OTHER_BELOW);
-    const wasOpen = list.querySelector('.places-other details')?.open;
+    const otherOpen = list.querySelector('.places-other details')?.open || ones.some((p) => p.city === selected);
     list.innerHTML = many.map(row).join('') + (ones.length
-      ? `<li class="places-other"><details${wasOpen ? ' open' : ''}><summary>Other <span>${ones.length} ${ones.length === 1 ? 'city' : 'cities'} with 1–2 alumni</span></summary><ul>${ones.map(row).join('')}</ul></details></li>`
+      ? `<li class="places-other"><details${otherOpen ? ' open' : ''}><summary>Other <span>${ones.length} ${ones.length === 1 ? 'city' : 'cities'} with 1–2 alumni</span></summary><ul>${ones.map(row).join('')}</ul></details></li>`
       : '');
   };
   const drawGlobe = () => {
     if (!globe) return;
     const places = onMap();
     globe.pointsData([...places, { ...origin, origin: true }])
-      .arcsData(places.map((p) => ({ startLat: origin.lat, startLng: origin.lng, endLat: p.lat, endLng: p.lng })));
+      .arcsData(places.map((p) => ({ startLat: origin.lat, startLng: origin.lng, endLat: p.lat, endLng: p.lng })))
+      .ringsData(matchMedia('(prefers-reduced-motion: reduce)').matches ? [] : places.filter(hasMBB));
   };
   onPlaces = () => { drawList(); drawGlobe(); };
 
   render();
   if (!globeEl) return;
 
+  // Open a city (from the list or the globe), show its firms, and turn the globe to it.
+  const select = (p, fromGlobe) => {
+    selected = selected === p.city && !fromGlobe ? null : p.city;
+    drawList();
+    const item = list?.querySelector(`.place[data-city="${CSS.escape(p.city)}"]`);
+    if (item && fromGlobe) item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (globe && selected && p.lat !== null && p.lat !== undefined) {
+      controls.autoRotate = false;
+      // Altitude 2 keeps the whole globe in view while it turns to the city.
+      globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: 2 }, 1100);
+    }
+  };
   list?.addEventListener('click', (e) => {
-    const b = e.target.closest('button'); if (!b || !globe) return;
-    const p = data.places[+b.dataset.i];
-    controls.autoRotate = false;
-    globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: 1.3 }, 1200);
+    const b = e.target.closest('button[data-i]'); if (!b) return;
+    select(data.places[+b.dataset.i], false);
   });
 
   const start = async () => {
@@ -202,7 +223,7 @@
     const nk = countries.find((c) => c.id === '408');
     if (nk) nk.geometry = { type: 'Polygon', coordinates: [[[124.3, 40.0], [125.0, 40.6], [126.9, 41.8], [128.1, 42.0], [129.7, 42.4], [130.6, 42.4], [129.9, 41.0], [129.2, 40.7], [127.5, 39.6], [128.3, 38.6], [127.0, 38.3], [126.1, 37.7], [125.3, 37.7], [124.7, 38.1], [125.3, 38.6], [125.1, 39.6], [124.3, 40.0]]] };
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const size = () => { const w = globeEl.clientWidth; return [w, Math.min(w, 640)]; };
+    const size = () => { const w = Math.min(globeEl.clientWidth, 640); return [globeEl.clientWidth, w]; };
     const [w, h] = size();
     globe = window.Globe({ animateIn: !reduce })(globeEl)
       .width(w).height(h)
@@ -211,10 +232,13 @@
       .hexPolygonsData(countries).hexPolygonResolution(3).hexPolygonMargin(0.35)
       .hexPolygonColor(() => 'rgba(214, 223, 239, 0.55)')
       .pointLat('lat').pointLng('lng')
-      .pointColor((d) => (d.origin ? '#ffffff' : '#c9ad6a'))
+      .pointColor((d) => (d.origin ? '#ffffff' : (hasMBB(d) ? '#f3d27a' : '#a99a74')))
       .pointAltitude((d) => (d.origin ? 0.01 : 0.02 + Math.sqrt(d.count) * 0.04))
       .pointRadius((d) => (d.origin ? 0.5 : 0.35 + Math.sqrt(d.count) * 0.12))
-      .pointLabel((d) => (d.origin ? 'Hamilton College, Clinton, NY' : label(d)))
+      .pointLabel((d) => (d.origin ? 'Hamilton College, Clinton, NY' : `${label(d)}${hasMBB(d) ? ' · MBB' : ''}<br><small>Click for firms</small>`))
+      .onPointClick((d) => { if (!d.origin) select(d, true); })
+      .ringLat('lat').ringLng('lng').ringColor(() => (t) => `rgba(243,210,122,${1 - t})`)
+      .ringMaxRadius(2.6).ringPropagationSpeed(1.4).ringRepeatPeriod(1800)
       .arcColor(() => ['rgba(255,255,255,0.15)', '#c9ad6a'])
       .arcStroke(0.5)
       .arcDashLength(reduce ? 1 : 0.5).arcDashGap(reduce ? 0 : 0.25).arcDashAnimateTime(reduce ? 0 : 2600)
