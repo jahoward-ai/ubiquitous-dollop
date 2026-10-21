@@ -213,50 +213,114 @@ if (driftLayers.length && !matchMedia('(prefers-reduced-motion: reduce)').matche
   const sig = window.HCG_SIGNATURE;
   const svg = intro.querySelector('.intro-sign');
   const pen = intro.querySelector('.intro-pen');
+  const mark = intro.querySelector('.intro-mark');
   svg.setAttribute('viewBox', sig.viewBox);
   svg.innerHTML = sig.paths.map((p) => `<path d="${p.d}" pathLength="${p.len}" style="stroke-dasharray:${p.len};stroke-dashoffset:${p.len}"></path>`).join('');
   const paths = [...svg.querySelectorAll('path')];
   const total = sig.paths.reduce((s, p) => s + p.len, 0);
 
-  let done = false; let stop = false;
-  const reveal = () => {
-    if (done) return; done = true;
-    pen.style.opacity = '0';
-    svg.classList.add('settle');
-    setTimeout(() => intro.classList.remove('writing'), 350);
+  let done = false; let stop = false; let burst = null;
+  const finishCover = () => { intro.classList.add('from-burst'); intro.classList.remove('writing'); };
+  const skip = () => {
+    if (done) return;
+    stop = true; done = true;
+    burst?.remove();
+    svg.classList.add('settle'); pen.style.opacity = '0';
+    intro.classList.remove('writing');
   };
-  const skip = () => { if (!done) { stop = true; svg.classList.add('settle'); done = true; pen.style.opacity = '0'; intro.classList.remove('writing'); } };
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, skip, { once: true, passive: true }));
 
+  // Pen: follows the outline, but glides toward each new point so it never jumps.
   const penBox = () => { const r = pen.getBoundingClientRect(); return [r.width || 100, (r.width || 100) * (2342 / 2383)]; };
-  const introBox = () => intro.getBoundingClientRect();
-  const placePen = (pathEl, at) => {
+  const toLocal = (pathEl, at) => {
     const pt = pathEl.getPointAtLength(at);
-    const m = pathEl.getScreenCTM(); const box = introBox();
-    const x = m.a * pt.x + m.c * pt.y + m.e - box.left;
-    const y = m.b * pt.x + m.d * pt.y + m.f - box.top;
+    const m = pathEl.getScreenCTM(); const box = intro.getBoundingClientRect();
+    return [m.a * pt.x + m.c * pt.y + m.e - box.left, m.b * pt.x + m.d * pt.y + m.f - box.top];
+  };
+  let penX = null; let penY = null;
+  const movePen = (x, y, snap) => {
+    if (penX === null || snap) { penX = x; penY = y; } else { penX += (x - penX) * 0.45; penY += (y - penY) * 0.45; }
     const [pw, ph] = penBox();
-    pen.style.transform = `translate(${(x - pw * 0.03).toFixed(1)}px, ${(y - ph * 0.97).toFixed(1)}px) rotate(-4deg)`;
+    pen.style.transform = `translate(${(penX - pw * 0.03).toFixed(1)}px, ${(penY - ph * 0.97).toFixed(1)}px) rotate(-4deg)`;
   };
 
-  const DURATION = 3000; // whole signature, in ms
-  const start = performance.now() + 250;
+  // "HCG" bursts into specks that fly out, then gather into the Hamilton Consulting Group wordmark.
+  const explode = () => {
+    const box = intro.getBoundingClientRect();
+    const W = Math.round(box.width); const H = Math.round(box.height);
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const sample = (draw, gap) => {
+      const c = document.createElement('canvas'); c.width = W; c.height = H;
+      const x = c.getContext('2d'); draw(x);
+      const d = x.getImageData(0, 0, W, H).data; const pts = [];
+      for (let y = 0; y < H; y += gap) for (let xx = 0; xx < W; xx += gap) if (d[(y * W + xx) * 4 + 3] > 110) pts.push([xx, y]);
+      return pts;
+    };
+    // Where the letters are now.
+    const r = svg.getBoundingClientRect(); const vb = sig.viewBox.split(' ').map(Number);
+    const sc = Math.min(r.width / vb[2], r.height / vb[3]);
+    const ox = r.left - box.left + (r.width - vb[2] * sc) / 2 - vb[0] * sc;
+    const oy = r.top - box.top + (r.height - vb[3] * sc) / 2 - vb[1] * sc;
+    const from = sample((x) => { x.setTransform(sc, 0, 0, sc, ox, oy); x.fillStyle = '#fff'; sig.paths.forEach((p) => x.fill(new Path2D(p.d))); }, 2);
+    // Where the wordmark will be.
+    const mr = mark.getBoundingClientRect();
+    const to = sample((x) => x.drawImage(mark, mr.left - box.left, mr.top - box.top, mr.width, mr.height), W < 600 ? 2 : 3);
+    if (!from.length || !to.length) { svg.classList.add('settle'); finishCover(); return; }
+    const N = Math.min(to.length, 2600); const stepT = to.length / N;
+    const cx = from.reduce((s, p) => s + p[0], 0) / from.length; const cy = from.reduce((s, p) => s + p[1], 0) / from.length;
+    const parts = Array.from({ length: N }, (_, i) => {
+      const [tx, ty] = to[Math.floor(i * stepT)];
+      const [sx, sy] = from[Math.floor(Math.random() * from.length)];
+      const a = Math.atan2(sy - cy, sx - cx) + (Math.random() - .5) * 1.4;
+      const dist = 40 + Math.random() * 150;
+      return { sx, sy, bx: sx + Math.cos(a) * dist, by: sy + Math.sin(a) * dist - 20, tx, ty, d: Math.random() * 180, gold: Math.random() < .45 };
+    });
+    burst = document.createElement('canvas'); burst.className = 'intro-burst';
+    burst.width = W * ratio; burst.height = H * ratio; intro.appendChild(burst);
+    const bx = burst.getContext('2d'); bx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    svg.style.transition = 'none'; svg.style.opacity = '0';
+    const easeOut = (k) => 1 - Math.pow(1 - k, 3);
+    const easeInOut = (k) => (k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+    const OUT = 420; const IN = 900; const FADE = 380; const t0 = performance.now();
+    let covered = false;
+    const frame = (now) => {
+      if (stop) return;
+      const t = now - t0;
+      bx.clearRect(0, 0, W, H);
+      const alpha = t < OUT + IN ? 1 : Math.max(0, 1 - (t - OUT - IN) / FADE);
+      parts.forEach((p) => {
+        let x; let y;
+        if (t < OUT) { const k = easeOut(t / OUT); x = p.sx + (p.bx - p.sx) * k; y = p.sy + (p.by - p.sy) * k; }
+        else { const k = easeInOut(Math.max(0, Math.min(1, (t - OUT - p.d) / (IN - p.d)))); x = p.bx + (p.tx - p.bx) * k; y = p.by + (p.ty - p.by) * k; }
+        bx.fillStyle = p.gold ? `rgba(233,210,150,${alpha})` : `rgba(255,255,255,${alpha})`;
+        bx.fillRect(x, y, 1.7, 1.7);
+      });
+      if (!covered && t > OUT + IN - 250) { covered = true; finishCover(); }
+      if (t < OUT + IN + FADE) requestAnimationFrame(frame); else { burst.remove(); burst = null; done = true; }
+    };
+    requestAnimationFrame(frame);
+  };
+
+  const DURATION = 2200; // whole signature, in ms
+  const easeSine = (k) => -(Math.cos(Math.PI * k) - 1) / 2;
+  const start = performance.now() + 200;
   pen.style.opacity = '.5';
-  placePen(paths[0], 0);
+  { const [x, y] = toLocal(paths[0], 0); movePen(x, y, true); }
   const step = (now) => {
     if (stop) return;
     const k = Math.max(0, Math.min(1, (now - start) / DURATION));
-    const eased = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
-    let left = eased * total;
+    let left = easeSine(k) * total;
+    let target = null;
     paths.forEach((p, i) => {
       const len = sig.paths[i].len;
       const drawn = Math.max(0, Math.min(len, left));
       p.style.strokeDashoffset = String(len - drawn);
-      if (drawn > 0 && drawn < len) placePen(p, drawn);
+      if (!target && drawn < len) target = toLocal(p, drawn);
       left -= len;
     });
+    if (target) movePen(target[0], target[1], false);
     if (k < 1) requestAnimationFrame(step);
-    else { svg.classList.add('inked'); pen.style.opacity = '0'; setTimeout(reveal, 900); }
+    else { svg.classList.add('inked'); pen.style.opacity = '0'; setTimeout(() => { if (!stop) explode(); }, 600); }
   };
   requestAnimationFrame(step);
 })();

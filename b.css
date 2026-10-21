@@ -448,3 +448,7 @@ button, input, select, textarea { font: inherit; }
 .js-reveal [data-reveal].shown > *:nth-child(3) { transition-delay: .24s; }
 .js-reveal [data-reveal].shown > *:nth-child(4) { transition-delay: .36s; }
 @media (prefers-reduced-motion: reduce) { .js-reveal [data-reveal] > * { opacity: 1; transform: none; transition: none; } }
+
+/* "HCG" bursts into specks that gather into the wordmark */
+.intro-burst { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; pointer-events: none; }
+.intro.from-burst .intro-mark { animation: fade-in .55s ease both; }
