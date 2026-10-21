@@ -301,7 +301,7 @@ if (driftLayers.length && !matchMedia('(prefers-reduced-motion: reduce)').matche
     requestAnimationFrame(frame);
   };
 
-  const DURATION = 2200; // whole signature, in ms
+  const DURATION = 1000; // whole signature, in ms
   const easeSine = (k) => -(Math.cos(Math.PI * k) - 1) / 2;
   const start = performance.now() + 200;
   pen.style.opacity = '.5';
