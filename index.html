@@ -6,7 +6,7 @@
 <title>Hamilton Consulting Group</title>
 <meta name="description" content="Hamilton College's student consulting group: learn the profession, prepare for recruiting, and practice on real client work through Quill.">
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="b.css?v=18">
+<link rel="stylesheet" href="b.css?v=21">
 </head>
 <body data-page="home">
 <a class="skip" href="#main">Skip to content</a>
@@ -18,15 +18,26 @@
   <div class="intro-drift" data-drift="0.35"><img class="intro-quill" src="assets/hcg-quill.png" alt=""></div>
   <div class="intro-center" data-drift="0.12" data-fade>
     <img class="intro-mark" src="assets/hcg-wordmark-white.png" alt="Hamilton Consulting Group">
-    <p class="intro-tag">Where Hamilton students learn consulting by doing it.</p>
+    <p class="intro-tag">Leveraging lessons learned on the Hill.</p>
   </div>
   <a class="intro-scroll" href="#welcome">Scroll<span aria-hidden="true"></span></a>
+  <canvas class="intro-fx" aria-hidden="true"></canvas>
+  <img class="intro-pen" src="assets/hcg-quill.png" alt="">
 </section>
+<script>
+  // Hide the finished cover until the writing animation runs (b.js), unless motion is reduced.
+  // Safety net: show the cover after 6 seconds no matter what.
+  (function (intro) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    intro.classList.add('writing');
+    setTimeout(function () { intro.classList.remove('writing'); }, 6000);
+  })(document.currentScript.previousElementSibling);
+</script>
 
 <section class="hero" id="welcome"><div class="wrap hero-grid">
   <div>
     <p class="kicker">Hamilton College’s student consulting group</p>
-    <h1>From College Hill to the <em>top</em> consulting firms.</h1>
+    <h1>From College Hill to <em>top</em> consulting firms.</h1>
     <div class="actions"><a class="btn gold" href="#start">Find where to start</a><a class="arrow-link" href="join.html">Join HCG</a></div>
   </div>
   <div class="collage">
@@ -37,7 +48,7 @@
 </div>
 
 <section class="band sky" id="start"><div class="wrap">
-  <div class="head"><div><p class="kicker">Start here</p><h2>Where are you starting from?</h2></div><p class="lede">Pick the line that sounds like you. Each one takes you to the part of HCG built for it.</p></div>
+  <div class="head head-solo"><h2>Where are you starting from?</h2></div>
   <div class="paths">
     <a class="path" href="prepare.html#profession"><small>First-year or curious</small><h3>“What do consultants actually do?”</h3><p>A plain-English intro to the work, the firms, and the career paths.</p><span>Learn the basics</span></a>
     <a class="path" href="prepare.html#timeline"><small>Sophomore or junior</small><h3>“I want to recruit for consulting.”</h3><p>The recruiting calendar, case interview prep, and office hours.</p><span>Start preparing</span></a>
@@ -47,8 +58,8 @@
 </div></section>
 
 <section class="band"><div class="wrap">
-  <div class="head"><div><p class="kicker">How HCG works</p><h2>The Group teaches consulting. Quill practices it.</h2></div><p class="lede">Anyone at Hamilton can learn with HCG. Quill is the selective, hands-on side, where student teams take on real client projects.</p></div>
-  <div class="split">
+  <div class="head head-solo"><div><p class="kicker">How HCG works</p><h2>The Group teaches consulting. Quill practices it.</h2></div></div>
+  <div class="split split-quill">
     <div><p class="exhibit"><b>HCG</b> Open to every Hamilton student</p><h3>Learn and prepare</h3><p>No application needed. Come to sessions, use the resources, and practice with other members.</p>
       <ul class="ticks"><li>Overviews of the profession and the firms</li><li>Casing series and peer practice</li><li>Office hours, the case book, and the case library</li><li>Sessions with alumni and employers</li></ul>
       <div class="actions"><a class="btn" href="prepare.html">Explore Prepare</a></div></div>
@@ -59,21 +70,34 @@
 </div></section>
 
 <section class="band navy"><div class="wrap head" style="margin-bottom:0">
-  <div><p class="exhibit">Where HCG alumni work</p><h2>HCG alumni are already at the top firms.</h2><p class="lede" style="margin-top:1.25rem"><span data-alumni="total">113</span> HCG alumni work at <span data-alumni="employers">46</span> employers in cities from Boston to Hong Kong. See where on the alumni globe.</p><div class="actions"><a class="btn gold" href="alumni.html">Open the alumni globe</a></div></div>
-  <ul class="bars on-navy" data-firm-bars data-limit="4" aria-label="HCG alumni at the four largest employers"></ul>
+  <div><h2>HCG alumni are already at the top firms.</h2><p class="lede on-white" style="margin-top:1.25rem"><span data-alumni="total">113</span> HCG alumni work at <span data-alumni="employers">46</span> employers in cities from Boston to Hong Kong. See where on the alumni globe.</p><div class="actions"><a class="btn gold" href="alumni.html">Open the alumni globe</a></div></div>
+  <ul class="bars on-navy grow" data-firm-bars data-limit="5" aria-label="HCG alumni at the largest employers"></ul>
 </div></section>
 
-<section class="band"><div class="wrap">
-  <div class="callout">
-    <div><p class="kicker">Help lead HCG</p><h2>Want to help run HCG?</h2><p style="margin-top:.75rem">Partners serve on the Executive Board and own a portfolio, from recruiting prep to Quill operations.</p></div>
-    <div class="actions" style="margin-top:0"><a class="btn" href="https://forms.gle/L6PbRgAhz2x7ijzN7" target="_blank" rel="noopener">Apply for Partnership</a><a class="arrow-link" href="about.html#board">Meet the board</a></div>
+<section class="partner-band"><div class="wrap partner-grid">
+  <div class="partner-copy">
+    <p class="kicker">Partnership</p>
+    <h2>Help run HCG.</h2>
+    <p>Partners serve on the Executive Board and each own a portfolio.</p>
+    <div class="actions"><a class="btn" href="https://forms.gle/L6PbRgAhz2x7ijzN7" target="_blank" rel="noopener">Apply for Partnership</a><a class="arrow-link" href="about.html#board">Meet the board</a></div>
   </div>
+  <div class="partner-portfolios">
+    <p class="partner-label">Portfolios partners lead</p>
+    <ul>
+      <li>Recruiting &amp; Case Preparation</li>
+      <li>Alumni &amp; Employer Relations</li>
+      <li>Quill Operations &amp; Project Leadership</li>
+      <li>Membership Development &amp; Events</li>
+      <li>Industry Knowledge</li>
+    </ul>
+  </div>
+  <div class="partner-quill" aria-hidden="true"></div>
 </div></section>
 
 </main>
 <div data-foot></div>
 <script src="assets/alumni-data.js?v=3"></script>
-<script src="assets/alumni.js?v=7"></script>
-<script src="b.js?v=10"></script>
+<script src="assets/alumni.js?v=8"></script>
+<script src="b.js?v=12"></script>
 </body>
 </html>

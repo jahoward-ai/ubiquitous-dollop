@@ -61,7 +61,24 @@
     document.querySelectorAll('[data-firm-bars]').forEach((ul) => {
       const firms = data.firms.slice(0, +(ul.dataset.limit || data.firms.length));
       const max = Math.max(...firms.map((f) => f.count));
-      ul.innerHTML = firms.map((f) => `<li data-tip="${f.name}: ${f.count} HCG alumni" title="${f.name}: ${f.count} HCG alumni" tabindex="0"><span class="name">${f.name}</span><span class="track-bar"><span class="fill" style="width:${(f.count / max * 100).toFixed(2)}%"></span></span><span class="val">${f.count}</span></li>`).join('');
+      ul.innerHTML = firms.map((f) => `<li data-tip="${f.name}: ${f.count} HCG alumni" title="${f.name}: ${f.count} HCG alumni" tabindex="0"><span class="name">${f.name}</span><span class="track-bar"><span class="fill" style="width:${(f.count / max * 100).toFixed(2)}%;--w:${(f.count / max * 100).toFixed(2)}%"></span></span><span class="val" data-count="${f.count}">${f.count}</span></li>`).join('');
+      // Bars marked "grow" fill in and count up the first time they scroll into view.
+      if (ul.classList.contains('grow') && !ul.dataset.watched) {
+        ul.dataset.watched = '1';
+        const run = () => {
+          ul.classList.add('in');
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          ul.querySelectorAll('[data-count]').forEach((el) => {
+            const end = +el.dataset.count; const t0 = performance.now();
+            const tick = (t) => { const k = Math.min(1, (t - t0) / 1100); el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); };
+            requestAnimationFrame(tick);
+          });
+        };
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) { io.disconnect(); run(); } }, { threshold: 0.35 });
+          io.observe(ul);
+        } else run();
+      } else if (ul.dataset.watched) ul.classList.add('in');
     });
     document.querySelectorAll('[data-other-employers]').forEach((box) => {
       const wasOpen = box.querySelector('details')?.open;

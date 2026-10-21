@@ -159,3 +159,120 @@ if (driftLayers.length && !matchMedia('(prefers-reduced-motion: reduce)').matche
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   update();
 }
+
+// ---- Homepage opening: quill writes "HCG", the ink bursts into dust, cover settles ----
+(() => {
+  const intro = document.querySelector('.intro.writing');
+  const fxIntro = document.querySelector('.intro');
+  if (!fxIntro) return;
+  const canvas = fxIntro.querySelector('.intro-fx');
+  const pen = fxIntro.querySelector('.intro-pen');
+  const ctx = canvas.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0; let H = 0;
+  const size = () => {
+    W = fxIntro.clientWidth; H = fxIntro.clientHeight;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  size();
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const GOLD = [201, 173, 106]; const WHITE = [255, 255, 255];
+
+  // Gentle dust that keeps drifting behind the cover.
+  let ambient = []; let ambientOn = false; let visible = true;
+  const seedAmbient = () => {
+    const n = Math.round(Math.min(90, (W * H) / 14000));
+    ambient = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.4 + .5, vy: -(Math.random() * .25 + .06), vx: (Math.random() - .5) * .12, a: Math.random() * .45 + .12, c: Math.random() < .55 ? GOLD : WHITE, tw: Math.random() * Math.PI * 2 }));
+  };
+  let bursts = [];
+  const loop = () => {
+    if (!ambientOn) return;
+    if (visible) {
+      ctx.clearRect(0, 0, W, H);
+      const t = performance.now() / 1000;
+      ambient.forEach((p) => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.y < -5) { p.y = H + 5; p.x = Math.random() * W; }
+        const a = p.a * (.65 + .35 * Math.sin(t * 1.3 + p.tw));
+        ctx.fillStyle = `rgba(${p.c[0]},${p.c[1]},${p.c[2]},${a.toFixed(3)})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      });
+      bursts = bursts.filter((p) => p.life > 0);
+      bursts.forEach((p) => {
+        p.vx *= .965; p.vy = p.vy * .965 - .012; p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+        ctx.fillStyle = `rgba(${p.c[0]},${p.c[1]},${p.c[2]},${Math.max(0, p.life).toFixed(3)})`;
+        ctx.fillRect(p.x, p.y, p.s, p.s);
+      });
+    }
+    requestAnimationFrame(loop);
+  };
+  const startAmbient = () => {
+    if (ambientOn || reduce) return;
+    seedAmbient(); ambientOn = true; requestAnimationFrame(loop);
+  };
+  if ('IntersectionObserver' in window) new IntersectionObserver((e) => { visible = e[0].isIntersecting; }).observe(fxIntro);
+  addEventListener('resize', () => { size(); if (ambientOn) seedAmbient(); });
+
+  if (!intro) { startAmbient(); return; }
+
+  let done = false;
+  const reveal = () => { if (done) return; done = true; intro.classList.remove('writing'); pen.style.opacity = '0'; startAmbient(); };
+  const skip = () => { if (!done) { stopWriting = true; ctx.clearRect(0, 0, W, H); reveal(); } };
+  let stopWriting = false;
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, skip, { once: true, passive: true }));
+
+  (async () => {
+    try { await Promise.race([document.fonts.load('200px "Great Vibes"'), wait(1500)]); } catch { /* use fallback */ }
+    if (stopWriting) return;
+    // Draw "HCG" once off-screen; the visible canvas reveals it left to right.
+    const fs = Math.min(W * 0.3, H * 0.42, 300);
+    const off = document.createElement('canvas'); off.width = W; off.height = H;
+    const o = off.getContext('2d');
+    o.font = `${fs}px "Great Vibes", "Snell Roundhand", "Apple Chancery", cursive`;
+    o.textAlign = 'center'; o.textBaseline = 'middle'; o.fillStyle = '#fff';
+    o.fillText('HCG', W / 2, H / 2);
+    const tw = o.measureText('HCG').width;
+    const left = W / 2 - tw / 2 - fs * 0.05; const right = W / 2 + tw / 2 + fs * 0.05;
+    const penW = pen.getBoundingClientRect().width || 110;
+    const penH = penW * (2342 / 2383);
+    pen.style.opacity = '1';
+    const dur = 1900; const t0 = performance.now();
+    await new Promise((resolve) => {
+      const step = (now) => {
+        if (stopWriting) { resolve(); return; }
+        const k = Math.min(1, (now - t0) / dur);
+        const p = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        const x = left + (right - left) * p;
+        const y = H / 2 - fs * 0.05 + Math.sin(p * Math.PI * 7) * fs * 0.2;
+        ctx.clearRect(0, 0, W, H);
+        ctx.save(); ctx.beginPath(); ctx.rect(0, 0, x, H); ctx.clip();
+        ctx.shadowColor = 'rgba(201,173,106,.7)'; ctx.shadowBlur = 14; ctx.drawImage(off, 0, 0, W, H);
+        ctx.restore();
+        // The quill's tip is its bottom-left corner.
+        pen.style.transform = `translate(${(x - penW * 0.03).toFixed(1)}px, ${(y - penH * 0.97).toFixed(1)}px) rotate(-6deg)`;
+        if (k < 1) requestAnimationFrame(step); else resolve();
+      };
+      requestAnimationFrame(step);
+    });
+    if (stopWriting) return;
+    await wait(260);
+    // Burst: turn every few inked pixels into a particle flying outward.
+    const img = o.getImageData(0, 0, W, H).data;
+    const gap = W < 600 ? 3 : 4;
+    for (let y = 0; y < H; y += gap) {
+      for (let x = 0; x < W; x += gap) {
+        if (img[(y * W + x) * 4 + 3] > 120) {
+          const ang = Math.atan2(y - H / 2, x - W / 2) + (Math.random() - .5) * 1.2;
+          const sp = Math.random() * 4.5 + 1;
+          bursts.push({ x, y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 1, life: 1, decay: Math.random() * .012 + .008, s: Math.random() * 2.4 + 1.2, c: Math.random() < .5 ? GOLD : WHITE });
+        }
+      }
+    }
+    pen.style.transition = 'opacity .5s ease'; pen.style.opacity = '0';
+    ambientOn = false; seedAmbient(); ambientOn = true; requestAnimationFrame(loop);
+    await wait(380);
+    reveal();
+  })();
+})();

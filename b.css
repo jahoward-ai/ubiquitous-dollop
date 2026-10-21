@@ -1,7 +1,7 @@
 /* HCG redesign ("Version B")
    Layout idea: a consulting deck you can scroll. White pages, navy bands for proof,
    and "Exhibit" labels (the way consultants caption a chart) on anything that is evidence. */
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap");
 
 :root {
   --ink: #0a1633;          /* body text, deepest navy */
@@ -324,8 +324,8 @@ button, input, select, textarea { font: inherit; }
 .home-blue { background: linear-gradient(100deg, #030f33 0%, #08205f 48%, #163a92 100%); color: #fff; }
 .intro { position: relative; display: grid; place-items: center; min-height: calc(100svh - 72px - env(safe-area-inset-top, 0px)); overflow: hidden; }
 .intro-quill { position: absolute; top: 50%; left: 50%; width: min(78vw, 880px); max-width: none; filter: brightness(0) invert(1); opacity: .62; transform: translate(-50%, -50%) rotate(22deg); animation: quill-in 1.4s cubic-bezier(.2, .7, .2, 1) both; pointer-events: none; }
-.intro-mark { position: relative; z-index: 1; width: min(78vw, 640px); animation: mark-drop .9s cubic-bezier(.2, .8, .25, 1.15) .75s both; filter: drop-shadow(0 6px 30px rgba(3, 15, 51, .65)); }
-.intro-scroll { position: absolute; bottom: clamp(1.25rem, 4vh, 2.5rem); left: 50%; display: flex; flex-direction: column; align-items: center; gap: .35rem; color: var(--on-navy-muted); font: italic 400 1.05rem/1 var(--label); text-decoration: none; transform: translateX(-50%); animation: fade-in .6s ease 1.7s both; }
+.intro-mark { position: relative; z-index: 1; width: min(78vw, 640px); animation: mark-drop .9s cubic-bezier(.2, .8, .25, 1.15) .45s both; filter: drop-shadow(0 6px 30px rgba(3, 15, 51, .65)); }
+.intro-scroll { position: absolute; bottom: clamp(1.25rem, 4vh, 2.5rem); left: 50%; display: flex; flex-direction: column; align-items: center; gap: .35rem; color: var(--on-navy-muted); font: italic 400 1.05rem/1 var(--label); text-decoration: none; transform: translateX(-50%); animation: fade-in .6s ease 1.5s both; }
 .intro-scroll span { width: 12px; height: 12px; border-right: 2px solid var(--gold); border-bottom: 2px solid var(--gold); transform: rotate(45deg); animation: nudge 1.8s ease-in-out 2.3s infinite; }
 .intro-scroll:hover { color: #fff; }
 @keyframes quill-in { from { opacity: 0; transform: translate(-40%, -62%) rotate(22deg) scale(.94); } to { opacity: .62; transform: translate(-50%, -50%) rotate(22deg); } }
@@ -371,8 +371,56 @@ button, input, select, textarea { font: inherit; }
 /* Intro: tagline under the wordmark, and layers that drift at different speeds on scroll */
 .intro-drift { position: absolute; inset: 0; will-change: transform; pointer-events: none; }
 .intro-center { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: clamp(1rem, 2.5vh, 1.6rem); will-change: transform, opacity; }
-.intro-tag { margin: 0; padding: 0 1rem; color: var(--gold-soft); font: italic 400 clamp(1.15rem, 2.2vw, 1.6rem)/1.35 var(--label); text-align: center; text-shadow: 0 2px 18px rgba(3, 15, 51, .8); animation: tag-in .9s ease 1.55s both; }
+.intro-tag { margin: 0; padding: 0 1rem; color: var(--gold-soft); font: italic 400 clamp(1.15rem, 2.2vw, 1.6rem)/1.35 var(--label); text-align: center; text-shadow: 0 2px 18px rgba(3, 15, 51, .8); animation: tag-in .9s ease 1.25s both; }
 @keyframes tag-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .intro-tag { animation: none; } }
 .intro-center::before { content: ""; position: absolute; z-index: -1; inset: -18% -14%; background: radial-gradient(closest-side, rgba(4, 18, 60, .82) 0%, rgba(4, 18, 60, .55) 55%, rgba(4, 18, 60, 0) 100%); pointer-events: none; }
 .intro-tag { font-size: clamp(1.25rem, 2.4vw, 1.75rem); color: #f3e6c4; }
+
+/* ---- Homepage refinements ---------------------------------------------------- */
+.head.head-solo { grid-template-columns: 1fr; }
+/* Bullet points: black squares on white, white squares on navy */
+.ticks li::before { background: var(--ink); }
+/* "How HCG works": the Quill half is dark blue, like the alumni band below it */
+.split.split-quill { border-color: #0b2466; }
+.split.split-quill > div + div { background: linear-gradient(160deg, #061a52 0%, #031443 100%); border-left-color: #0b2466; color: #fff; }
+.split.split-quill > div + div h3 { color: #fff; }
+.split.split-quill > div + div p { color: var(--on-navy-muted); }
+.split.split-quill > div + div .exhibit { color: var(--on-navy-muted); }
+.split.split-quill > div + div .ticks li { border-top-color: var(--line-navy); color: #fff; }
+.split.split-quill > div + div .ticks li::before { background: #fff; }
+.split.split-quill > div + div .btn.ghost { border-color: rgba(255, 255, 255, .7); color: #fff; }
+.split.split-quill > div + div .btn.ghost:hover { background: #fff; color: var(--navy); }
+.band.navy .lede.on-white { color: #fff; }
+
+/* Alumni bars: grow when they scroll into view, numbers count up, hover highlights */
+.bars.grow .fill { width: 0 !important; transition: width 1.1s cubic-bezier(.2, .7, .2, 1); }
+.bars.grow.in .fill { width: var(--w) !important; }
+.bars.grow li { transition: opacity .2s; cursor: default; }
+.bars.grow:hover li { opacity: .55; }
+.bars.grow li:hover, .bars.grow li:focus-visible { opacity: 1; }
+.bars.on-navy.grow li:hover .fill, .bars.on-navy.grow li:focus-visible .fill { background: #f3e1ad; box-shadow: 0 0 18px rgba(201, 173, 106, .55); }
+.bars.on-navy .name, .bars.on-navy .val { color: #fff; }
+@media (prefers-reduced-motion: reduce) { .bars.grow .fill { transition: none; } }
+
+/* Partnership section */
+.partner-band { position: relative; overflow: hidden; padding-block: var(--band); background: radial-gradient(circle at 85% 30%, #dfe8f8 0%, #f4f7fc 40%, #ffffff 70%); border-top: 1px solid var(--line); }
+.partner-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+.partner-copy, .partner-portfolios { position: relative; z-index: 1; min-width: 0; }
+.partner-copy h2 { font-size: clamp(2.4rem, 5vw, 4rem); }
+.partner-copy p:not(.kicker) { max-width: 38ch; margin-top: 1rem; color: var(--muted); font-size: 1.1rem; }
+.partner-label { margin: 0 0 .75rem; color: var(--blue); font: italic 400 1.1rem/1.3 var(--label); }
+.partner-portfolios ul { margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
+.partner-portfolios li { padding: .9rem 0; border-bottom: 1px solid var(--line); font: 400 1.25rem/1.3 var(--serif); background: rgba(255, 255, 255, .7); }
+.partner-quill { position: absolute; z-index: 0; right: -6%; top: 50%; width: min(52%, 560px); aspect-ratio: 1; opacity: .16; background: linear-gradient(225deg, #9dbcf7 0%, #3d6fe0 40%, #031443 100%); -webkit-mask: url("assets/hcg-quill.png") center / contain no-repeat; mask: url("assets/hcg-quill.png") center / contain no-repeat; transform: translateY(-50%) rotate(-8deg); pointer-events: none; }
+@media (max-width: 860px) { .partner-grid { grid-template-columns: 1fr; } .partner-quill { width: 90%; right: -25%; } }
+
+/* Opening: the quill writes "HCG" in cursive, which bursts into dust, then the cover settles in */
+.intro-fx { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; }
+.intro-pen { position: absolute; top: 0; left: 0; z-index: 3; width: clamp(80px, 11vw, 130px); max-width: none; filter: brightness(0) invert(1) drop-shadow(0 0 6px rgba(201, 173, 106, .6)); opacity: 0; pointer-events: none; will-change: transform; }
+.intro.writing .intro-quill, .intro.writing .intro-mark, .intro.writing .intro-tag, .intro.writing .intro-scroll { animation: none; opacity: 0; }
+.intro.writing .intro-center::before { opacity: 0; }
+.intro-center::before { transition: opacity 1s ease .3s; }
+.bars .track-bar, .bars .fill { display: block; }
+.split.split-quill > div:first-child .exhibit b { color: var(--blue); }
+.split.split-quill > div + div .exhibit b { color: #fff; }
