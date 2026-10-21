@@ -160,119 +160,114 @@ if (driftLayers.length && !matchMedia('(prefers-reduced-motion: reduce)').matche
   update();
 }
 
-// ---- Homepage opening: quill writes "HCG", the ink bursts into dust, cover settles ----
+// ---- Homepage opening: the quill signs "HCG", then the cover settles in -------------
+// The pen follows the real outline of each letter (assets/hcg-signature.js), so it moves
+// the way a hand would. Fine moving lines in the background echo the quill's line art.
 (() => {
-  const intro = document.querySelector('.intro.writing');
-  const fxIntro = document.querySelector('.intro');
-  if (!fxIntro) return;
-  const canvas = fxIntro.querySelector('.intro-fx');
-  const pen = fxIntro.querySelector('.intro-pen');
-  const ctx = canvas.getContext('2d');
+  const intro = document.querySelector('.intro');
+  if (!intro) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Background: two slow ribbons of fine lines, drawn on a canvas.
+  const canvas = intro.querySelector('.intro-lines');
+  const ctx = canvas.getContext('2d');
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  let W = 0; let H = 0;
+  let W = 0; let H = 0; let visible = true;
   const size = () => {
-    W = fxIntro.clientWidth; H = fxIntro.clientHeight;
+    W = intro.clientWidth; H = intro.clientHeight;
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   };
-  size();
-  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const GOLD = [201, 173, 106]; const WHITE = [255, 255, 255];
-
-  // Gentle dust that keeps drifting behind the cover.
-  let ambient = []; let ambientOn = false; let visible = true;
-  const seedAmbient = () => {
-    const n = Math.round(Math.min(90, (W * H) / 14000));
-    ambient = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.4 + .5, vy: -(Math.random() * .25 + .06), vx: (Math.random() - .5) * .12, a: Math.random() * .45 + .12, c: Math.random() < .55 ? GOLD : WHITE, tw: Math.random() * Math.PI * 2 }));
+  const ribbons = [
+    { y: .30, amp: .10, waves: 1.3, speed: .07, lines: 26, spread: .16, color: '255,255,255', alpha: .07 },
+    { y: .74, amp: .08, waves: 1.0, speed: -.05, lines: 22, spread: .14, color: '201,173,106', alpha: .09 },
+  ];
+  const drawLines = (t) => {
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineWidth = 1;
+    ribbons.forEach((r) => {
+      for (let i = 0; i < r.lines; i += 1) {
+        const k = i / (r.lines - 1);
+        ctx.strokeStyle = `rgba(${r.color},${(r.alpha * (.45 + .55 * Math.sin(Math.PI * k))).toFixed(3)})`;
+        ctx.beginPath();
+        for (let x = -20; x <= W + 20; x += 16) {
+          const u = x / W;
+          const twist = Math.sin(u * Math.PI * 2 * r.waves + t * r.speed * 6 + k * 2.2);
+          const y = H * (r.y + r.amp * Math.sin(u * Math.PI * 2 * r.waves + t * r.speed * 4) + (k - .5) * r.spread * twist);
+          if (x === -20) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    });
   };
-  let bursts = [];
-  const loop = () => {
-    if (!ambientOn) return;
-    if (visible) {
-      ctx.clearRect(0, 0, W, H);
-      const t = performance.now() / 1000;
-      ambient.forEach((p) => {
-        p.x += p.vx; p.y += p.vy;
-        if (p.y < -5) { p.y = H + 5; p.x = Math.random() * W; }
-        const a = p.a * (.65 + .35 * Math.sin(t * 1.3 + p.tw));
-        ctx.fillStyle = `rgba(${p.c[0]},${p.c[1]},${p.c[2]},${a.toFixed(3)})`;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
-      });
-      bursts = bursts.filter((p) => p.life > 0);
-      bursts.forEach((p) => {
-        p.vx *= .965; p.vy = p.vy * .965 - .012; p.x += p.vx; p.y += p.vy; p.life -= p.decay;
-        ctx.fillStyle = `rgba(${p.c[0]},${p.c[1]},${p.c[2]},${Math.max(0, p.life).toFixed(3)})`;
-        ctx.fillRect(p.x, p.y, p.s, p.s);
-      });
-    }
+  size(); drawLines(0);
+  if ('IntersectionObserver' in window) new IntersectionObserver((e) => { visible = e[0].isIntersecting; }).observe(intro);
+  addEventListener('resize', () => { size(); drawLines(performance.now() / 1000); });
+  if (!reduce) {
+    const loop = (now) => { if (visible) drawLines(now / 1000); requestAnimationFrame(loop); };
     requestAnimationFrame(loop);
-  };
-  const startAmbient = () => {
-    if (ambientOn || reduce) return;
-    seedAmbient(); ambientOn = true; requestAnimationFrame(loop);
-  };
-  if ('IntersectionObserver' in window) new IntersectionObserver((e) => { visible = e[0].isIntersecting; }).observe(fxIntro);
-  addEventListener('resize', () => { size(); if (ambientOn) seedAmbient(); });
+  }
 
-  if (!intro) { startAmbient(); return; }
+  // The signature.
+  if (!intro.classList.contains('writing') || !window.HCG_SIGNATURE) { intro.classList.remove('writing'); return; }
+  const sig = window.HCG_SIGNATURE;
+  const svg = intro.querySelector('.intro-sign');
+  const pen = intro.querySelector('.intro-pen');
+  svg.setAttribute('viewBox', sig.viewBox);
+  svg.innerHTML = sig.paths.map((p) => `<path d="${p.d}" pathLength="${p.len}" style="stroke-dasharray:${p.len};stroke-dashoffset:${p.len}"></path>`).join('');
+  const paths = [...svg.querySelectorAll('path')];
+  const total = sig.paths.reduce((s, p) => s + p.len, 0);
 
-  let done = false;
-  const reveal = () => { if (done) return; done = true; intro.classList.remove('writing'); pen.style.opacity = '0'; startAmbient(); };
-  const skip = () => { if (!done) { stopWriting = true; ctx.clearRect(0, 0, W, H); reveal(); } };
-  let stopWriting = false;
+  let done = false; let stop = false;
+  const reveal = () => {
+    if (done) return; done = true;
+    pen.style.opacity = '0';
+    svg.classList.add('settle');
+    setTimeout(() => intro.classList.remove('writing'), 350);
+  };
+  const skip = () => { if (!done) { stop = true; svg.classList.add('settle'); done = true; pen.style.opacity = '0'; intro.classList.remove('writing'); } };
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, skip, { once: true, passive: true }));
 
-  (async () => {
-    try { await Promise.race([document.fonts.load('200px "Great Vibes"'), wait(1500)]); } catch { /* use fallback */ }
-    if (stopWriting) return;
-    // Draw "HCG" once off-screen; the visible canvas reveals it left to right.
-    const fs = Math.min(W * 0.3, H * 0.42, 300);
-    const off = document.createElement('canvas'); off.width = W; off.height = H;
-    const o = off.getContext('2d');
-    o.font = `${fs}px "Great Vibes", "Snell Roundhand", "Apple Chancery", cursive`;
-    o.textAlign = 'center'; o.textBaseline = 'middle'; o.fillStyle = '#fff';
-    o.fillText('HCG', W / 2, H / 2);
-    const tw = o.measureText('HCG').width;
-    const left = W / 2 - tw / 2 - fs * 0.05; const right = W / 2 + tw / 2 + fs * 0.05;
-    const penW = pen.getBoundingClientRect().width || 110;
-    const penH = penW * (2342 / 2383);
-    pen.style.opacity = '1';
-    const dur = 1900; const t0 = performance.now();
-    await new Promise((resolve) => {
-      const step = (now) => {
-        if (stopWriting) { resolve(); return; }
-        const k = Math.min(1, (now - t0) / dur);
-        const p = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
-        const x = left + (right - left) * p;
-        const y = H / 2 - fs * 0.05 + Math.sin(p * Math.PI * 7) * fs * 0.2;
-        ctx.clearRect(0, 0, W, H);
-        ctx.save(); ctx.beginPath(); ctx.rect(0, 0, x, H); ctx.clip();
-        ctx.shadowColor = 'rgba(201,173,106,.7)'; ctx.shadowBlur = 14; ctx.drawImage(off, 0, 0, W, H);
-        ctx.restore();
-        // The quill's tip is its bottom-left corner.
-        pen.style.transform = `translate(${(x - penW * 0.03).toFixed(1)}px, ${(y - penH * 0.97).toFixed(1)}px) rotate(-6deg)`;
-        if (k < 1) requestAnimationFrame(step); else resolve();
-      };
-      requestAnimationFrame(step);
+  const penBox = () => { const r = pen.getBoundingClientRect(); return [r.width || 100, (r.width || 100) * (2342 / 2383)]; };
+  const introBox = () => intro.getBoundingClientRect();
+  const placePen = (pathEl, at) => {
+    const pt = pathEl.getPointAtLength(at);
+    const m = pathEl.getScreenCTM(); const box = introBox();
+    const x = m.a * pt.x + m.c * pt.y + m.e - box.left;
+    const y = m.b * pt.x + m.d * pt.y + m.f - box.top;
+    const [pw, ph] = penBox();
+    pen.style.transform = `translate(${(x - pw * 0.03).toFixed(1)}px, ${(y - ph * 0.97).toFixed(1)}px) rotate(-4deg)`;
+  };
+
+  const DURATION = 3000; // whole signature, in ms
+  const start = performance.now() + 250;
+  pen.style.opacity = '.5';
+  placePen(paths[0], 0);
+  const step = (now) => {
+    if (stop) return;
+    const k = Math.max(0, Math.min(1, (now - start) / DURATION));
+    const eased = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    let left = eased * total;
+    paths.forEach((p, i) => {
+      const len = sig.paths[i].len;
+      const drawn = Math.max(0, Math.min(len, left));
+      p.style.strokeDashoffset = String(len - drawn);
+      if (drawn > 0 && drawn < len) placePen(p, drawn);
+      left -= len;
     });
-    if (stopWriting) return;
-    await wait(260);
-    // Burst: turn every few inked pixels into a particle flying outward.
-    const img = o.getImageData(0, 0, W, H).data;
-    const gap = W < 600 ? 3 : 4;
-    for (let y = 0; y < H; y += gap) {
-      for (let x = 0; x < W; x += gap) {
-        if (img[(y * W + x) * 4 + 3] > 120) {
-          const ang = Math.atan2(y - H / 2, x - W / 2) + (Math.random() - .5) * 1.2;
-          const sp = Math.random() * 4.5 + 1;
-          bursts.push({ x, y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 1, life: 1, decay: Math.random() * .012 + .008, s: Math.random() * 2.4 + 1.2, c: Math.random() < .5 ? GOLD : WHITE });
-        }
-      }
-    }
-    pen.style.transition = 'opacity .5s ease'; pen.style.opacity = '0';
-    ambientOn = false; seedAmbient(); ambientOn = true; requestAnimationFrame(loop);
-    await wait(380);
-    reveal();
-  })();
+    if (k < 1) requestAnimationFrame(step);
+    else { svg.classList.add('inked'); pen.style.opacity = '0'; setTimeout(reveal, 900); }
+  };
+  requestAnimationFrame(step);
+})();
+
+// ---- Scroll reveal for [data-reveal] blocks ----------------------------------------
+(() => {
+  const blocks = [...document.querySelectorAll('[data-reveal]')];
+  if (!blocks.length || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.classList.add('js-reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  blocks.forEach((b) => io.observe(b));
 })();
