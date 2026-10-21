@@ -452,3 +452,17 @@ button, input, select, textarea { font: inherit; }
 /* "HCG" bursts into specks that gather into the wordmark */
 .intro-burst { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; pointer-events: none; }
 .intro.from-burst .intro-mark { animation: fade-in .55s ease both; }
+
+/* About page */
+.fit-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+.fit-grid > * { min-width: 0; }
+.band.navy .ticks li { border-top-color: var(--line-navy); color: var(--on-navy-muted); }
+.band.navy .ticks li::before { background: #fff; }
+.band.navy .ticks strong { color: #fff; }
+.fit-list li { padding: .9rem 0 .9rem 1.4rem; font-size: 1.02rem; }
+.person .meta.did strong { color: var(--ink); font-weight: 600; }
+.band.sky-soft { background: #f1f5fb; }
+.hamilton-photo { position: relative; margin: 0; }
+.hamilton-photo img { width: 100%; height: clamp(260px, 42vw, 560px); object-fit: cover; object-position: center 62%; }
+.hamilton-caption { position: absolute; left: var(--gutter); bottom: 1.25rem; margin: 0; padding: .4rem .75rem; background: rgba(3, 20, 67, .78); color: #fff; font: italic 400 1rem/1.3 var(--label); }
+@media (max-width: 860px) { .fit-grid { grid-template-columns: 1fr; } }
