@@ -11,7 +11,7 @@ const cur = (p) => (p === here ? ' aria-current="page"' : '');
 
 // Top menu. Each page has a dropdown of its sections (hover on desktop, tap the arrow on phones).
 const MENU = [
-  { href: 'about.html', key: 'about', label: 'About', items: [['hamilton-fit', 'The Hamilton fit'], ['board', 'Executive Board'], ['governance', 'Governance'], ['membership', 'Membership']] },
+  { href: 'about.html', key: 'about', label: 'About', items: [['hamilton-fit', 'The Hamilton fit'], ['board', 'The Partnership'], ['governance', 'Governance'], ['membership', 'Membership']] },
   { href: 'alumni.html', key: 'alumni', label: 'Alumni', items: [['globe-map', 'Alumni globe'], ['types', 'By type of consulting'], ['connections', 'Alumni Connections']] },
   { href: 'prepare.html', key: 'prepare', label: 'Prepare', items: [['profession', 'The profession'], ['timeline', 'Recruiting timeline'], ['case', 'Case interviews'], ['presentations', 'Presentations'], ['support', 'Get help from HCG']] },
   { href: 'resources.html', key: 'resources', label: 'Resources', items: [['events', 'Events'], ['presentations', 'Presentations'], ['case-materials', 'Case materials'], ['firms', 'Firms'], ['outside', 'Outside resources']] },
