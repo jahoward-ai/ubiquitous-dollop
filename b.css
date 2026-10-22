@@ -614,3 +614,6 @@ button, input, select, textarea { font: inherit; }
 @keyframes mark-rise { 0% { opacity: 0; transform: translateY(28px) scale(.96); filter: blur(6px) drop-shadow(0 6px 30px rgba(3, 15, 51, .65)); } 100% { opacity: 1; transform: none; filter: blur(0) drop-shadow(0 6px 30px rgba(3, 15, 51, .65)); } }
 .intro-mark { animation: mark-rise 1.1s cubic-bezier(.2, .7, .2, 1) .35s both; }
 @media (prefers-reduced-motion: reduce) { .intro-mark { animation: none; } }
+/* Partnership portfolio list: text sits inside its white box, not on the edge */
+.partner-portfolios li { padding: .9rem 1.1rem; }
+.partner-label { padding-left: 1.1rem; }
