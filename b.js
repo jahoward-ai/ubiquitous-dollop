@@ -15,10 +15,10 @@ document.querySelector('[data-top]').outerHTML = `
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
   <nav class="menu" id="menu" aria-label="Main">
     <a href="about.html"${cur('about')}>About</a>
-    <a href="quill.html"${cur('quill')}>Quill</a>
     <a href="alumni.html"${cur('alumni')}>Alumni</a>
     <a href="prepare.html"${cur('prepare')}>Prepare</a>
     <a href="resources.html"${cur('resources')}>Resources</a>
+    <a href="quill.html"${cur('quill')}>Quill</a>
     <a class="btn" href="join.html"${cur('join')}>Join HCG</a>
   </nav>
 </div></header>`;
@@ -377,3 +377,39 @@ document.querySelectorAll('[data-timeline] li[data-date]').forEach((li) => {
   li.classList.add(upcoming ? 'upcoming' : 'past');
   if (upcoming) li.querySelector('time')?.insertAdjacentHTML('beforeend', ' <span class="tag">Upcoming</span>');
 });
+
+// ---- Quill page: a strand of quill-like lines running down the whole page -----------
+// A bundle of fine curves that weaves left and right from top to bottom, twisting like
+// the quill's mesh. Redrawn when the page height changes.
+(() => {
+  const svg = document.querySelector('[data-strand]');
+  if (!svg) return;
+  const main = svg.parentElement;
+  const draw = () => {
+    const W = main.clientWidth; const H = main.scrollHeight;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.style.height = `${H}px`;
+    const lines = 24; const steps = Math.ceil(H / 40);
+    const swing = Math.min(W * 0.32, 420); const width = Math.min(W * 0.12, 150);
+    let out = '';
+    for (let i = 0; i < lines; i += 1) {
+      const k = i / (lines - 1) - 0.5;
+      let d = '';
+      for (let j = 0; j <= steps; j += 1) {
+        const y = (j / steps) * H;
+        const t = y / 900; // one full weave roughly every 900px of page
+        const center = W * 0.62 + Math.sin(t * Math.PI * 1.2) * swing;
+        const twist = Math.cos(t * Math.PI * 2.4 + k * 0.6);
+        const x = center + k * width * twist;
+        d += `${j ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`;
+      }
+      const a = (0.10 + 0.14 * (1 - Math.abs(k) * 2)).toFixed(3);
+      out += `<path d="${d}" style="stroke-opacity:${a}"></path>`;
+    }
+    svg.innerHTML = out;
+  };
+  draw();
+  let last = main.scrollHeight;
+  addEventListener('resize', draw);
+  new ResizeObserver(() => { if (Math.abs(main.scrollHeight - last) > 40) { last = main.scrollHeight; draw(); } }).observe(main);
+})();

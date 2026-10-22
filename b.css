@@ -562,3 +562,25 @@ button, input, select, textarea { font: inherit; }
 .request-dark strong { color: #fff; }
 .request-dark .result { color: var(--ink); }
 .request-dark .result p { color: var(--muted); }
+
+/* ---- Quill page: lighter blue gradient, same family as the header quill ---------- */
+:root { --quill-grad: linear-gradient(135deg, #5b86ea 0%, #3a66d6 35%, #2448b4 70%, #173589 100%); }
+.split.split-quill-blue > div + div { background: var(--quill-grad); border-left-color: transparent; color: #fff; }
+.split.split-quill-blue > div + div h3 { color: #fff; }
+.split.split-quill-blue > div + div p { color: #e6edfb; }
+.split.split-quill-blue > div + div .exhibit, .split.split-quill-blue > div + div .exhibit b { color: #f3e1ad; }
+.band.quill-grad { background: var(--quill-grad); color: #fff; }
+.band.quill-grad .kicker { color: #f3e1ad; }
+.band.quill-grad .lede, .band.quill-grad p { color: #e6edfb; }
+.band.quill-grad .card { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .25); }
+.band.quill-grad .card h3 { color: #fff; }
+.split.split-even > div + div { background: var(--paper); }
+.split.split-even { background: var(--paper); }
+
+/* The strand of quill lines behind the whole Quill page */
+.quill-page main { position: relative; }
+.quill-strand { position: absolute; top: 0; left: 0; z-index: 1; width: 100%; pointer-events: none; overflow: visible; }
+.quill-strand path { fill: none; stroke: #6d93ea; stroke-width: 1.2; }
+.quill-page main > section > .wrap, .quill-page main > nav { position: relative; z-index: 2; }
+.quill-page .quill-art { z-index: 2; }
+.quill-page main > nav.local { position: sticky; z-index: 40; }

@@ -1,7 +1,11 @@
 # Photo credits
 
-The site uses real photos of Hamilton College from Wikimedia Commons. Their licenses
-require the credit line shown on each photo; keep it if you keep the photo.
+Most pages use placeholder stock photos from Unsplash (free to use, no credit required) until HCG has its own:
+home-hero.jpg and quill.jpg (Home), about.jpg (About), learn.jpg (Prepare), resources.jpg (Resources), join.jpg (Join).
+Replace any of them with a JPG of the same name.
+
+The About page bottom uses a real Hamilton photo (hamilton-chapel.jpg, CC0). The other hamilton-*.jpg files below are
+licensed Hamilton photos kept as options; if you use one, its license requires a visible photographer credit.
 
 | File | Used on | Photographer | License | Source |
 |---|---|---|---|---|
