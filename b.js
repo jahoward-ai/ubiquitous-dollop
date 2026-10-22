@@ -9,19 +9,50 @@ const HCG_FORM_ENDPOINT = '';
 const here = document.body.dataset.page;
 const cur = (p) => (p === here ? ' aria-current="page"' : '');
 
+// Top menu. Each page has a dropdown of its sections (hover on desktop, tap the arrow on phones).
+const MENU = [
+  { href: 'about.html', key: 'about', label: 'About', items: [['hamilton-fit', 'The Hamilton fit'], ['board', 'Executive Board'], ['governance', 'Governance'], ['membership', 'Membership']] },
+  { href: 'alumni.html', key: 'alumni', label: 'Alumni', items: [['globe-map', 'Alumni globe'], ['types', 'By type of consulting'], ['connections', 'Alumni Connections']] },
+  { href: 'prepare.html', key: 'prepare', label: 'Prepare', items: [['profession', 'The profession'], ['timeline', 'Recruiting timeline'], ['case', 'Case interviews'], ['presentations', 'Presentations'], ['support', 'Get help from HCG']] },
+  { href: 'resources.html', key: 'resources', label: 'Resources', items: [['events', 'Events'], ['presentations', 'Presentations'], ['case-materials', 'Case materials'], ['firms', 'Firms'], ['outside', 'Outside resources']] },
+  { href: 'quill.html', key: 'quill', label: 'Quill', items: [['year', 'The Quill year'], ['students', 'For students'], ['organizations', 'For organizations'], ['skills', 'Skills you build'], ['work', 'Past engagements']] },
+  { href: 'join.html', key: 'join', label: 'Join HCG', cta: true, items: [['ways', 'Ways to participate'], ['questions', 'Common questions'], ['request', 'Ask for anything']] },
+];
 document.querySelector('[data-top]').outerHTML = `
 <header class="top dark"><div class="wrap">
   <a class="logo" href="index.html" aria-label="Hamilton Consulting Group home"><img src="assets/hcg-wordmark-white.png" alt="Hamilton Consulting Group"></a>
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
   <nav class="menu" id="menu" aria-label="Main">
-    <a href="about.html"${cur('about')}>About</a>
-    <a href="alumni.html"${cur('alumni')}>Alumni</a>
-    <a href="prepare.html"${cur('prepare')}>Prepare</a>
-    <a href="resources.html"${cur('resources')}>Resources</a>
-    <a href="quill.html"${cur('quill')}>Quill</a>
-    <a class="btn" href="join.html"${cur('join')}>Join HCG</a>
+    ${MENU.map((m, n) => `<div class="dd${m.cta ? ' dd-cta' : ''}">
+      <a class="dd-main${m.cta ? ' btn' : ''}" href="${m.href}"${cur(m.key)}>${m.label}</a>
+      <button class="dd-toggle" type="button" aria-expanded="false" aria-controls="dd-${n}" aria-label="Show ${m.label} sections"><span aria-hidden="true">⌄</span></button>
+      <div class="dd-panel" id="dd-${n}">${m.items.map(([id, t]) => `<a href="${m.href}#${id}">${t}</a>`).join('')}</div>
+    </div>`).join('')}
   </nav>
 </div></header>`;
+
+// Dropdown behavior: open on hover with a grace period (so moving the pointer into the
+// panel never closes it), one open at a time, Escape closes, arrow button for touch/keyboard.
+(() => {
+  const dds = [...document.querySelectorAll('.menu .dd')];
+  const wide = matchMedia('(min-width: 861px)');
+  const fine = matchMedia('(hover: hover) and (pointer: fine)');
+  const set = (dd, open) => { dd.classList.toggle('open', open); dd.querySelector('.dd-toggle').setAttribute('aria-expanded', String(open)); };
+  const only = (dd) => dds.forEach((o) => set(o, o === dd));
+  dds.forEach((dd) => {
+    let t;
+    dd.addEventListener('mouseenter', () => { if (wide.matches && fine.matches) { clearTimeout(t); only(dd); } });
+    dd.addEventListener('mouseleave', () => { if (wide.matches && fine.matches) t = setTimeout(() => set(dd, false), 300); });
+    dd.querySelector('.dd-toggle').addEventListener('click', (e) => { e.stopPropagation(); if (dd.classList.contains('open')) set(dd, false); else only(dd); });
+    dd.querySelector('.dd-main').addEventListener('click', (e) => {
+      // Touch screens at desktop width: first tap opens the dropdown, second follows the link.
+      if (wide.matches && !fine.matches && !dd.classList.contains('open')) { e.preventDefault(); only(dd); }
+    });
+    dd.addEventListener('focusout', (e) => { if (!dd.contains(e.relatedTarget)) set(dd, false); });
+  });
+  document.addEventListener('click', (e) => { if (!e.target.closest('.menu .dd')) dds.forEach((d) => set(d, false)); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') dds.forEach((d) => set(d, false)); });
+})();
 
 document.querySelector('[data-foot]').outerHTML = `
 <footer class="foot"><div class="wrap">
@@ -43,6 +74,7 @@ toggle.addEventListener('click', () => {
   toggle.textContent = open ? 'Close' : 'Menu';
 });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('open')) toggle.click(); });
+menu.addEventListener('click', (e) => { if (e.target.closest('a') && menu.classList.contains('open') && !e.defaultPrevented) toggle.click(); });
 
 // Section nav: highlight the section in view
 const localLinks = [...document.querySelectorAll('.local a')];

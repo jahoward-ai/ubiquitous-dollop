@@ -584,3 +584,27 @@ button, input, select, textarea { font: inherit; }
 .quill-page main > section > .wrap, .quill-page main > nav { position: relative; z-index: 2; }
 .quill-page .quill-art { z-index: 2; }
 .quill-page main > nav.local { position: sticky; z-index: 40; }
+
+/* ---- Top menu dropdowns -------------------------------------------------------- */
+.menu .dd { position: relative; display: flex; align-items: center; gap: .1rem; }
+.menu .dd-toggle { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 32px; padding: 0; border: 0; background: none; color: var(--on-navy-muted); font-size: .95rem; line-height: 1; cursor: pointer; }
+.menu .dd-toggle span { display: inline-block; transition: transform .2s ease; }
+.menu .dd.open .dd-toggle span { transform: rotate(180deg); }
+.menu .dd-toggle:hover, .menu .dd.open .dd-toggle { color: var(--gold); }
+.menu .dd-panel { position: absolute; top: calc(100% + 18px); left: -.9rem; z-index: 60; display: none; min-width: 240px; padding: .5rem; background: #061644; border: 1px solid var(--line-navy); border-top: 2px solid var(--gold); box-shadow: 0 18px 40px rgba(3, 15, 51, .4); }
+.menu .dd-cta .dd-panel { left: auto; right: 0; }
+/* Invisible bridge so the pointer can travel from the label into the panel */
+.menu .dd-panel::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 20px; }
+.menu .dd.open .dd-panel { display: block; }
+.top.dark .menu .dd-panel a { display: block; padding: .6rem .75rem; border: 0; color: #fff; font-size: .9rem; font-weight: 400; white-space: nowrap; }
+.top.dark .menu .dd-panel a:hover, .top.dark .menu .dd-panel a:focus-visible { background: rgba(255, 255, 255, .08); color: var(--gold); border: 0; }
+.menu .dd-cta .dd-toggle { color: var(--gold); }
+@media (max-width: 860px) {
+  .menu .dd { flex-wrap: wrap; border-bottom: 1px solid var(--line-navy); }
+  .menu .dd .dd-main { flex: 1; border-bottom: 0 !important; }
+  .menu .dd-toggle { width: 44px; height: 44px; font-size: 1.2rem; }
+  .menu .dd-panel { position: static; width: 100%; min-width: 0; margin: 0 0 .5rem; padding: 0 0 .25rem .75rem; background: none; border: 0; border-left: 2px solid var(--gold); box-shadow: none; }
+  .menu .dd-panel::before { content: none; }
+  .menu .dd-cta { border-bottom: 0; margin-top: 1rem; }
+  .menu .dd-cta .dd-main { text-align: center; }
+}
