@@ -541,3 +541,24 @@ button, input, select, textarea { font: inherit; }
 .firm-group a { display: block; padding: .5rem 0; color: var(--ink); text-decoration: none; }
 .firm-group a::after { content: " ↗"; color: var(--blue); font-size: .85em; }
 .firm-group a:hover { color: var(--blue); }
+
+/* Hamilton photos with photographer credits (required by their licenses) */
+.ph-photo { margin: 0; min-width: 0; }
+.ph-photo img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 3px; }
+.ph-photo.ph-chapel-front img { object-position: center 40%; }
+.ph-photo.ph-south-hall img { object-position: center 60%; }
+.credit { margin: .5rem 0 0; color: var(--on-navy-muted); font-size: .72rem; line-height: 1.4; }
+.credit a { color: inherit; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .3); }
+.credit a:hover { color: #fff; }
+.home-blue .collage-credit { position: absolute; left: 0; right: 0; bottom: -1.75rem; text-align: right; }
+.home-blue .collage .b { object-position: center 25%; }
+@media (max-width: 560px) { .home-blue .collage-credit { position: static; margin-top: .5rem; text-align: left; } }
+
+/* Join: "Ask for anything" on dark blue */
+.request-dark .form label { color: #fff; }
+.request-dark .form label span { color: var(--on-navy-muted); }
+.request-dark .form input, .request-dark .form select, .request-dark .form textarea { border-color: rgba(255, 255, 255, .25); }
+.request-dark .form .btn { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+.request-dark strong { color: #fff; }
+.request-dark .result { color: var(--ink); }
+.request-dark .result p { color: var(--muted); }
