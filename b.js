@@ -369,3 +369,11 @@ document.querySelectorAll('[data-deck]').forEach((deck) => {
   });
   show(0);
 });
+
+// ---- Events timeline: mark each event as upcoming or past from today's date -------
+document.querySelectorAll('[data-timeline] li[data-date]').forEach((li) => {
+  const end = new Date(`${li.dataset.date}T23:59:59`);
+  const upcoming = end >= new Date();
+  li.classList.add(upcoming ? 'upcoming' : 'past');
+  if (upcoming) li.querySelector('time')?.insertAdjacentHTML('beforeend', ' <span class="tag">Upcoming</span>');
+});
