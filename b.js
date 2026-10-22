@@ -335,3 +335,37 @@ if (driftLayers.length && !matchMedia('(prefers-reduced-motion: reduce)').matche
   }, { threshold: 0.15 });
   blocks.forEach((b) => io.observe(b));
 })();
+
+// ---- Slide viewers (prepare.html) --------------------------------------------------
+// Arrows, keyboard arrows (when the viewer has focus), and swipe; next slide is preloaded.
+document.querySelectorAll('[data-deck]').forEach((deck) => {
+  const n = +deck.dataset.count; const base = deck.dataset.base;
+  const titles = JSON.parse(deck.dataset.titles || '[]');
+  const img = deck.querySelector('.deck-stage img'); const count = deck.querySelector('.deck-count');
+  const prev = deck.querySelector('[data-prev]'); const next = deck.querySelector('[data-next]');
+  const src = (i) => `${base}${String(i + 1).padStart(2, '0')}.jpg`;
+  let i = 0;
+  const show = (k) => {
+    i = Math.max(0, Math.min(n - 1, k));
+    img.src = src(i);
+    img.alt = `Slide ${i + 1} of ${n}${titles[i] ? `: ${titles[i]}` : ''}`;
+    count.textContent = `${i + 1} / ${n}`;
+    prev.disabled = i === 0; next.disabled = i === n - 1;
+    if (i + 1 < n) { const pre = new Image(); pre.src = src(i + 1); }
+  };
+  prev.addEventListener('click', () => show(i - 1));
+  next.addEventListener('click', () => show(i + 1));
+  deck.querySelector('.deck-stage').addEventListener('click', () => show(i + 1 < n ? i + 1 : 0));
+  deck.tabIndex = 0;
+  deck.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); show(i + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(i - 1); }
+  });
+  let x0 = null;
+  deck.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  deck.addEventListener('touchend', (e) => {
+    if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1));
+  });
+  show(0);
+});

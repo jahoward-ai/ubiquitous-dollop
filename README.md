@@ -32,7 +32,7 @@ The HCG website: six pages, plain HTML, no build step. Edit a file, commit, push
 
 **Change wording, the board, or a membership detail.** Open the page's `.html` file and edit the text between the tags. Membership and Quill selection wording reflects the mandate; change it only with Executive Board approval.
 
-**Add a presentation.** Put the PDF in `files/` and copy one of the cards in the Presentations section of `resources.html`.
+**Add a presentation.** Put the PDF (and the .pptx, if you want it downloadable) in `files/` and copy one of the cards in the Presentations section of `resources.html`. To add it to the slide viewer on `prepare.html`, export each slide as a JPG named `slide-01.jpg`, `slide-02.jpg`, … into `files/slides/<short-name>/`, then copy one of the `<article class="deck">` blocks and update its folder, slide count, and titles.
 
 **After changing `b.css` or `b.js`,** raise the `?v=` number where the pages link to them (for example `b.js?v=5` to `b.js?v=6`) so browsers load the new version.
 
