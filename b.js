@@ -375,7 +375,7 @@ document.querySelectorAll('[data-deck]').forEach((deck) => {
   const titles = JSON.parse(deck.dataset.titles || '[]');
   const img = deck.querySelector('.deck-stage img'); const count = deck.querySelector('.deck-count');
   const prev = deck.querySelector('[data-prev]'); const next = deck.querySelector('[data-next]');
-  const src = (i) => `${base}${String(i + 1).padStart(2, '0')}.jpg`;
+  const src = (i) => `${base}${String(i + 1).padStart(2, '0')}.jpg?v=2`;
   let i = 0;
   const show = (k) => {
     i = Math.max(0, Math.min(n - 1, k));
