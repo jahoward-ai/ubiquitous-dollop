@@ -333,28 +333,12 @@ if (driftLayers.length && !matchMedia('(prefers-reduced-motion: reduce)').matche
     requestAnimationFrame(frame);
   };
 
-  const DURATION = 1000; // whole signature, in ms
-  const easeSine = (k) => -(Math.cos(Math.PI * k) - 1) / 2;
-  const start = performance.now() + 200;
-  pen.style.opacity = '.5';
-  { const [x, y] = toLocal(paths[0], 0); movePen(x, y, true); }
-  const step = (now) => {
-    if (stop) return;
-    const k = Math.max(0, Math.min(1, (now - start) / DURATION));
-    let left = easeSine(k) * total;
-    let target = null;
-    paths.forEach((p, i) => {
-      const len = sig.paths[i].len;
-      const drawn = Math.max(0, Math.min(len, left));
-      p.style.strokeDashoffset = String(len - drawn);
-      if (!target && drawn < len) target = toLocal(p, drawn);
-      left -= len;
-    });
-    if (target) movePen(target[0], target[1], false);
-    if (k < 1) requestAnimationFrame(step);
-    else { svg.classList.add('inked'); pen.style.opacity = '0'; setTimeout(() => { if (!stop) explode(); }, 600); }
-  };
-  requestAnimationFrame(step);
+  // No pen: "HCG" fades in fully drawn, holds briefly, then bursts into the wordmark.
+  pen.style.display = 'none';
+  paths.forEach((p) => { p.style.strokeDashoffset = '0'; });
+  svg.classList.add('appear');
+  requestAnimationFrame(() => requestAnimationFrame(() => svg.classList.add('inked')));
+  setTimeout(() => { if (!stop) explode(); }, 1300);
 })();
 
 // ---- Scroll reveal for [data-reveal] blocks ----------------------------------------

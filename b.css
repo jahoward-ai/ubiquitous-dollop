@@ -608,3 +608,5 @@ button, input, select, textarea { font: inherit; }
   .menu .dd-cta { border-bottom: 0; margin-top: 1rem; }
   .menu .dd-cta .dd-main { text-align: center; }
 }
+/* Opening without the pen: "HCG" fades in, then bursts into the wordmark */
+.intro-sign.appear { animation: fade-in .7s ease both; }
